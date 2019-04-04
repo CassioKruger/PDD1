@@ -192,8 +192,8 @@ Group {
   MB2  = MovingBand2D[ MovingBand_PhysicalNb2, Rotor_Bnd_MB, Rotor2_Bottom_Bnd_MB, SymmetryFactor] ;   //rotor 1 and bottom rotor2
   Air = Region[{ Rotor_Air, Rotor_Airgap, Rotor2_Air, Rotor2_Airgap, Stator_Air, Stator_Airgap, MB, MB2} ] ;
 
-  DomainCC = Region[{ Air, Inds, StatorCC, RotorCC, Rotor2CC }];
-  DomainC  = Region[{ StatorC, RotorC, RotorC }];
+  DomainCC = Region[{ Air, Inds, StatorCC, RotorCC, Rotor2CC }];  //non conducting
+  DomainC  = Region[{ StatorC, RotorC, RotorC }];                 //massive conductor
   Domain  = Region[{ DomainCC, DomainC }] ;
 
   DomainNL = Region[{}];
@@ -726,10 +726,9 @@ Resolution {
       EndIf // End Flag_AnalysisType==0 (Static) Flag_AnalysisType==2 (Frequency)
 
       If(Flag_AnalysisType==1)
-        InitMovingBand2D[MB];
-        MeshMovingBand2D[MB];
-        //InitMovingBand2D[MB2];        //segunda banda de movimento
-        //MeshMovingBand2D[MB2];        //segunda banda de movimento
+        InitMovingBand2D[MB2];
+        MeshMovingBand2D[MB2];
+        
         InitSolution[A];
         SaveSolution[A];
         If(Flag_PrintFields)
@@ -738,7 +737,7 @@ Resolution {
 
         If(!Flag_ImposedSpeed) // Full dynamics
           InitSolution[M];
-    InitSolution[M]; // Twice for avoiding warning (a = d_t^2 x)
+          InitSolution[M]; // Twice for avoiding warning (a = d_t^2 x)
         EndIf
 
         TimeLoopTheta[time0, timemax, delta_time, 1.]{
@@ -777,14 +776,7 @@ Resolution {
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];
           EndIf
-          
-          /*ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[-delta_theta[]]];
-          If(!Flag_ImposedSpeed)
-            // Keep track of previous position
-            Evaluate[ $PreviousPosition = $Position ];
-          EndIf*/
-          MeshMovingBand2D[MB] ;
-          //MeshMovingBand2D[MB2] ;
+          MeshMovingBand2D[MB2] ;                    
         }
       EndIf // End Flag_AnalysisType==1 (Time domain)
     }

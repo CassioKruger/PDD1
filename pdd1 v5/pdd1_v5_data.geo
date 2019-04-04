@@ -13,9 +13,8 @@ pp = "Input/Constructive parameters/";
 
 DefineConstant[
   NbrPolesInModel = { 6, Choices{ 2="2",6="6"}, Name "Input/20Number of poles in FE model", Highlight "Blue"},
-  //NbrStatorPolesInModel = { 10, Choices{ 10="10",20="20",30="30",40="40",50="50"}, Name "Input/20Number of stator poles in FE model", Highlight "Blue"},
-  InitialRotorAngle_deg = { 30, Name "Input/20Initial rotor angle [deg]", Highlight "AliceBlue"},
-  InitialRotor2Angle_deg = { 40, Name "Input/20Initial rotor 2 angle [deg]", Highlight "AliceBlue"},
+  InitialRotorAngle_deg = { 0, Name "Input/20Initial rotor angle [deg]", Highlight "AliceBlue"},
+  InitialRotor2Angle_deg = { 0, Name "Input/20Initial rotor 2 angle [deg]", Highlight "AliceBlue"},
   Flag_OpenStator = {1, Choices{0,1}, Name "Input/39Open slots in stator"}
 ];
 
@@ -69,7 +68,6 @@ DefineConstant
   R_rin = {0.0495, Name StrCat[pp, "Raio Interno do Rotor [m]"],Highlight "SkyBlue"},
   R_rout = {0.133, Name StrCat[pp, "Raio Externo do Rotor [m]"],Highlight "SkyBlue"},
   h_m = {0.008, Name StrCat[pp, "Altura do Imã [m]"],Highlight "ForestGreen"},
-
   R_s_mag_in = {u*157.6, Name StrCat[pp, "Raio interno imãs estator [m]"],Highlight "Orchid"}
 ];
 
@@ -78,7 +76,8 @@ DefineConstant
 //-------------------------------------------------------------------------------------------------//
 
 sigma_fe = 0. ; // laminated steel
-DefineConstant[
+DefineConstant
+[
   mur_fe = {1000, Name StrCat[pp, "Relative permeability for linear case"]},
   b_remanent = {1.2, Name StrCat[pp, "Remanent induction [T]"] }
 ];

@@ -4,8 +4,9 @@
 
 Include "pdd1_v5_data.geo";
 
-DefineConstant[
-  Flag_AnalysisType = {1,  Choices{0="Static",  1="Time domain"}, Name "Input/19Type of analysis", Highlight "Blue",
+DefineConstant
+[
+  Flag_AnalysisType = {1,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/19Type of analysis", Highlight "Blue",
     Help Str["- Use 'Static' to compute static fields created in the machine",
       "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
 
@@ -182,34 +183,38 @@ Function {
   FillFactor_Winding = 0.5 ; // percentage of Cu in the surface coil side, smaller than 1
   Factor_R_3DEffects = 1.5 ; // bigger than Adding 50% of resistance
 
-  DefineConstant[ rpm = { rpm_nominal, Name "Input/7speed in rpm",
-                   Highlight "AliceBlue", Visible (Flag_AnalysisType==1)} 
-                ]; // speed in rpm
+  DefineConstant
+  [ 
+    rpm = { rpm_nominal, Name "Input/7speed in rpm", Highlight "AliceBlue", Visible (Flag_AnalysisType==1)} 
+  ]; // speed in rpm
 
   wr = rpm/60*2*Pi ; // speed in rad_mec/s
 
   // supply at fixed position
-  DefineConstant[ Freq = { wr*NbrPolePairs/(2*Pi), ReadOnly 1, 
-                  Name "Output/1Freq", Highlight "LightYellow" } 
-                ];
+  DefineConstant
+  [ 
+    Freq = { wr*NbrPolePairs/(2*Pi), ReadOnly 1, Name "Output/1Freq", Highlight "LightYellow" } 
+  ];
 
   Omega = 2*Pi*Freq ;
   T = 1/Freq ;
 
-  DefineConstant[ thetaMax_deg = { 180, Name "Input/21End rotor angle (loop)",
-                  Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }  
-                ];
+  DefineConstant
+  [ 
+    thetaMax_deg = { 180, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }  
+  ];
 
   theta0   = InitialRotorAngle + 0. ;
   thetaMax = thetaMax_deg * deg2rad ; // end rotor angle (used in doing a loop)
 
-  DefineConstant[
-                  NbTurns  = { (thetaMax-theta0)/(2*Pi), Name "Input/24Number of revolutions",
-                    Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)},
+  DefineConstant
+  [
+    NbTurns  = { (thetaMax-theta0)/(2*Pi), Name "Input/24Number of revolutions",
+      Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)},
 
-                  delta_theta_deg = { 1., Name "Input/22Step [deg]",
-                    Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
-                ];
+    delta_theta_deg = { 1., Name "Input/22Step [deg]",
+      Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
+  ];
 
   delta_theta[] = delta_theta_deg * deg2rad ;
 
@@ -217,10 +222,11 @@ Function {
   delta_time = delta_theta_deg * deg2rad/wr;
   timemax = thetaMax/wr;
 
-  DefineConstant[
-                  NbSteps = { Ceil[(timemax-time0)/delta_time], Name "Input/23Number of steps",
-                    Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)}
-                ];
+  DefineConstant
+  [
+    NbSteps = { Ceil[(timemax-time0)/delta_time], Name "Input/23Number of steps",
+      Highlight "LightGrey", ReadOnly 10, Visible (Flag_AnalysisType==1)}
+  ];
 
   RotorPosition[] = InitialRotorAngle + $Time * wr ;
   RotorPosition_deg[] = RotorPosition[]*180/Pi;
@@ -233,12 +239,13 @@ Function {
   Theta_Park[] = ((RotorPosition[] + Pi/8) - Pi/6) * NbrPolePairs; // electrical degrees
   Theta_Park_deg[] = Theta_Park[]*180/Pi;
 
-  DefineConstant[
-                  ID = { 0, Name "Input/50Id stator current",
-                    Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)},
-                  IQ = { Inominal, Name "Input/51Iq stator current",
-                    Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)}
-                ] ;
+  DefineConstant
+  [
+    ID = { 0, Name "Input/50Id stator current",
+      Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)},
+    IQ = { Inominal, Name "Input/51Iq stator current",
+      Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)}
+  ] ;
 
   II = Inominal;
 }

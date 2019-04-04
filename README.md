@@ -1,3 +1,6 @@
 # PDD1
-Pseudo direct drive 1.
-Engrenagem magnética acoplada a um gerador elétrico.
+
+Two moving band electric machine (generator) called "pseudo direct drive". Pseudo, because there is no friction betwen 
+the parts, althoug, it has a gear ratio.
+
+![image](https://user-images.githubusercontent.com/32344294/55524785-e4fcc580-5664-11e9-885a-7d9a46501634.png)

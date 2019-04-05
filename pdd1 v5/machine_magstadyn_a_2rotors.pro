@@ -778,6 +778,13 @@ Resolution {
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];
           EndIf
+
+          ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[-delta_theta[]]];
+          If(!Flag_ImposedSpeed)
+            // Keep track of previous position
+            Evaluate[ $PreviousPosition = $Position ];
+          EndIf
+
           MeshMovingBand2D[MB] ;                    
           MeshMovingBand2D[MB2] ;
         }
@@ -889,16 +896,7 @@ PostProcessing {
      Jacobian Vol ; Integration I1 ; }
        }
      }
-/*
-     { Name Torque_vw ; Value {
-   // Torque computation via Virtual Works
-         Integral { Type Global ;
-           [ CompZ[ 0.5 * nu[] * XYZ[] /\ VirtualWork[{d a}] ] * AxialLength ];
-           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor_Bottom_Bnd_MB];
-     Jacobian Vol ; Integration I1 ; }
-       }
-     }
-*/
+
      { Name Torque_Maxwell ;
        // Torque computation via Maxwell stress tensor
        Value {

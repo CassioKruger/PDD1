@@ -326,8 +326,8 @@ Integration {
       { Type Gauss ;
         Case {
           { GeoElement Triangle   ; NumberOfPoints  6 ; }
-    { GeoElement Quadrangle ; NumberOfPoints  4 ; }
-    { GeoElement Line       ; NumberOfPoints  13 ; }
+          { GeoElement Quadrangle ; NumberOfPoints  4 ; }
+          { GeoElement Line       ; NumberOfPoints  13 ; }
         }
       }
     }
@@ -342,7 +342,7 @@ Constraint {
     Case {
       { Region Surf_Inf ; Type Assign; Value 0. ; }
       { Region Surf_bn0 ; Type Assign; Value 0. ; }
-/*
+
       If(Flag_Symmetry)
         { Region Surf_cutA1; SubRegion Region[{Surf_Inf,Surf_bn0, Point_ref}]; Type Link;
           RegionRef Surf_cutA0; SubRegionRef Region[{Surf_Inf,Surf_bn0, Point_ref}];
@@ -379,7 +379,7 @@ Constraint {
         EndFor
 
 
-      EndIf*/
+      EndIf
     }
   }
 
@@ -562,11 +562,11 @@ Formulation {
       Galerkin {  [  0*Dof{d a} , {d a} ]  ;
         In Rotor_Bnd_MBaux; Jacobian Sur; Integration I1; }
 
-     /* Galerkin {  [  0*Dof{d a} , {d a} ]  ;
-        In Rotor2_Top_Bnd_MBaux; Jacobian Sur; Integration I1; }
+      Galerkin {  [  0*Dof{d a} , {d a} ]  ;                            //MB2
+        In Rotor2_Top_Bnd_MBaux; Jacobian Sur; Integration I1; }        //MB2
 
       Galerkin {  [  0*Dof{d a} , {d a} ]  ;
-        In Rotor2_Bottom_Bnd_MBaux; Jacobian Sur; Integration I1; }*/
+        In Rotor2_Bottom_Bnd_MBaux; Jacobian Sur; Integration I1; }
 
       Galerkin { [ -nu[] * br[] , {d a} ] ;
         In DomainM ; Jacobian Vol ; Integration I1 ; }
@@ -602,16 +602,16 @@ Formulation {
       // which is better to account for the end windings...
 
       If(Flag_Cir)
-  GlobalTerm { NeverDt[ Dof{Uz}                , {Iz} ] ; In Resistance_Cir ; }
+        GlobalTerm { NeverDt[ Dof{Uz}                , {Iz} ] ; In Resistance_Cir ; }
         GlobalTerm { NeverDt[ Resistance[] * Dof{Iz} , {Iz} ] ; In Resistance_Cir ; }
 
-  GlobalTerm { [ Dof{Uz}                      , {Iz} ] ; In Inductance_Cir ; }
-  GlobalTerm { DtDof [ Inductance[] * Dof{Iz} , {Iz} ] ; In Inductance_Cir ; }
+        GlobalTerm { [ Dof{Uz}                      , {Iz} ] ; In Inductance_Cir ; }
+        GlobalTerm { DtDof [ Inductance[] * Dof{Iz} , {Iz} ] ; In Inductance_Cir ; }
 
-  GlobalTerm { NeverDt[ Dof{Iz}        , {Iz} ] ; In Capacitance_Cir ; }
-  GlobalTerm { DtDof [ Capacitance[] * Dof{Uz} , {Iz} ] ; In Capacitance_Cir ; }
+        GlobalTerm { NeverDt[ Dof{Iz}        , {Iz} ] ; In Capacitance_Cir ; }
+        GlobalTerm { DtDof [ Capacitance[] * Dof{Uz} , {Iz} ] ; In Capacitance_Cir ; }
 
-  GlobalTerm { [ 0. * Dof{Iz} , {Iz} ] ; In DomainZt_Cir ; }
+        GlobalTerm { [ 0. * Dof{Iz} , {Iz} ] ; In DomainZt_Cir ; }
         GlobalTerm { [ 0. * Dof{Uz} , {Iz} ] ; In DomainZt_Cir ; }
 
         GlobalEquation {

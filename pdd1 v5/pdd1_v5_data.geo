@@ -2,10 +2,10 @@
 //UFPel - Eng. de Controle e Automação
 //pdd1 - v5.0
 
-u = 1e-3;       // unidade = mm
+u = 1e-3;           // unidade = mm
 mm = 1e-3;
-cm = 1e-2;      // unidade 
-deg2rad = Pi/180; // graus para radianos
+cm = 1e-2;          // unidade 
+deg2rad = Pi/180;   // graus para radianos
 
 //Point(0) = {0,0,0,1.0}; //origem/
 

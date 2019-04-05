@@ -42,7 +42,6 @@ Group{
   EndIf
 
   nbMagnetsStator = NbrStatorPolesTot/SymmetryFactor ;
-  Printf("stator magnet %g",nbMagnetsStator);
   For k In {1:nbMagnetsStator}
     Stator_Magnet~{k} = Region[ (STATOR_MAGNET+k-1) ];
     Stator_Magnets += Region[ Stator_Magnet~{k} ];

@@ -170,7 +170,7 @@ Group {
 
   Inds = Region[ {Stator_Inds, Rotor_Inds, Rotor2_Inds} ] ;
 
-  DomainM = Region[ {Stator_Magnets, Rotor_Magnets, Rotor2_Magnets} ] ;
+  DomainM = Region[ {Stator_Magnets, Rotor_Magnets} ] ;
   If(!Flag_ImposedCurrentDensity)
     DomainB = Region[ {Inds} ] ;
     DomainS = Region[ {} ];
@@ -696,8 +696,8 @@ Resolution {
 
         InitMovingBand2D[MB] ;
         MeshMovingBand2D[MB] ;
-        //InitMovingBand2D[MB2] ;
-        //MeshMovingBand2D[MB2] ;
+        InitMovingBand2D[MB2] ;
+        MeshMovingBand2D[MB2] ;
         InitSolution[A] ;
 
         If(Flag_ParkTransformation && Flag_SrcType_Stator==1)
@@ -726,6 +726,8 @@ Resolution {
       EndIf // End Flag_AnalysisType==0 (Static) Flag_AnalysisType==2 (Frequency)
 
       If(Flag_AnalysisType==1)
+        InitMovingBand2D[MB];
+        MeshMovingBand2D[MB];
         InitMovingBand2D[MB2];
         MeshMovingBand2D[MB2];
         
@@ -776,7 +778,8 @@ Resolution {
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];
           EndIf
-          MeshMovingBand2D[MB2] ;                    
+          MeshMovingBand2D[MB] ;                    
+          MeshMovingBand2D[MB2] ;
         }
       EndIf // End Flag_AnalysisType==1 (Time domain)
     }
@@ -857,19 +860,15 @@ PostProcessing {
            In ElementsOf[Rotor_Airgap, OnOneSideOf Rotor_Bnd_MB];
             Jacobian Vol ; Integration I1 ; }
        }
-/*
-       Value {
+     }
+
+      { Name Force_vw2 ;Value {
          Integral {
            Type Global ; [ 0.5 * nu[] * VirtualWork [{d a}] * AxialLength ];
            In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor2_Top_Bnd_MB];
        Jacobian Vol ; Integration I1 ; }
        }
-
-       Value {
-         Integral {
-           Type Global ; [ 0.5 * nu[] * VirtualWork [{d a}] * AxialLength ];
-           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor2_Bottom_Bnd_MB];
-       Jacobian Vol ; Integration I1 ; }*/
+       
      }
 
      { Name Torque_vw ; Value {
@@ -880,17 +879,17 @@ PostProcessing {
      Jacobian Vol ; Integration I1 ; }
        }
      }
-/*
+
      //rotor2
-     { Name Torque_vw ; Value {
+     { Name Torque_vw2 ; Value {
    // Torque computation via Virtual Works
          Integral { Type Global ;
            [ CompZ[ 0.5 * nu[] * XYZ[] /\ VirtualWork[{d a}] ] * AxialLength ];
-           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor_Top_Bnd_MB];
+           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor2_Top_Bnd_MB];
      Jacobian Vol ; Integration I1 ; }
        }
      }
-
+/*
      { Name Torque_vw ; Value {
    // Torque computation via Virtual Works
          Integral { Type Global ;
@@ -979,24 +978,24 @@ PostProcessing {
      { Name Flux_0  ;
        Value { Term { Type Global; [ CompZ[Flux_dq0[]] ] ; In DomainDummy ; } } }
 
-/*
+
      //rotor2
      { Name Rotor2Position_deg ;
        Value { Term { Type Global; [ Rotor2Position_deg[] ] ; In DomainDummy ; } } }
-     { Name Theta_Park_deg ;
+     { Name Theta_Park_deg2 ;
        Value { Term { Type Global; [ Theta_Park_deg[] ] ; In DomainDummy ; } } }
-     { Name IA  ;
+     { Name IA2  ;
        Value { Term { Type Global; [ IA[] ] ; In DomainDummy ; } } }
-     { Name IB  ;
+     { Name IB2  ;
        Value { Term { Type Global; [ IB[] ] ; In DomainDummy ; } } }
-     { Name IC  ;
+     { Name IC2  ;
        Value { Term { Type Global; [ IC[] ] ; In DomainDummy ; } } }
-     { Name Flux_d  ;
+     { Name Flux_d2  ;
        Value { Term { Type Global; [ CompX[Flux_dq0[]] ] ; In DomainDummy ; } } }
-     { Name Flux_q  ;
+     { Name Flux_q2  ;
        Value { Term { Type Global; [ CompY[Flux_dq0[]] ] ; In DomainDummy ; } } }
-     { Name Flux_0  ;
-       Value { Term { Type Global; [ CompZ[Flux_dq0[]] ] ; In DomainDummy ; } } }*/
+     { Name Flux_02  ;
+       Value { Term { Type Global; [ CompZ[Flux_dq0[]] ] ; In DomainDummy ; } } }
    }
  }
 

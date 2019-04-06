@@ -26,3 +26,6 @@ pra usar:
 O TERMINAL DEVE ESTAR NA PASTA DE TRABALHO
 
 testando um bagulho
+
+perfil de cores para usar 
+ASUS_X550LN_8086_AF0636ED

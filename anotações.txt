@@ -24,3 +24,5 @@ pra usar:
 >depois do commit, publish
 
 O TERMINAL DEVE ESTAR NA PASTA DE TRABALHO
+
+testando um bagulho

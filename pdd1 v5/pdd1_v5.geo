@@ -29,5 +29,3 @@ View[PostProcessing.NbViews-1].Light = 0;
 View[PostProcessing.NbViews-1].NbIso = 80;              // Number of intervals
 View[PostProcessing.NbViews-1].IntervalsType = 1;       // 1 - Iso Values; 2 - Continuous Map
 
-//testando no ubuntu
-//novo commit pra ver qual é que é

@@ -779,7 +779,7 @@ Resolution {
             Evaluate[ $PreviousPosition = $Position ];
           EndIf
 
-          ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[-delta_theta[]]];
+          ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[delta_theta[]]];
           If(!Flag_ImposedSpeed)
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];

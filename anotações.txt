@@ -29,3 +29,9 @@ testando um bagulho
 
 perfil de cores para usar 
 ASUS_X550LN_8086_AF0636ED
+
+path do ubuntu para instalar gmsh-language-vscode
+/usr/share/code/resources/app/extensions
+
+D8D5E82E-3D5B-46B5-B38E-8C841C21347D MONOKAI
+32bd64fa-d60a-4858-a5fc-5164cc49a2b8 onedark

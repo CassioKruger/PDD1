@@ -342,7 +342,7 @@ Constraint {
     Case {
       { Region Surf_Inf ; Type Assign; Value 0. ; }
       { Region Surf_bn0 ; Type Assign; Value 0. ; }
-
+  /*
       If(Flag_Symmetry)
         { Region Surf_cutA1; SubRegion Region[{Surf_Inf,Surf_bn0, Point_ref}]; Type Link;
           RegionRef Surf_cutA0; SubRegionRef Region[{Surf_Inf,Surf_bn0, Point_ref}];
@@ -377,7 +377,7 @@ Constraint {
           Coefficient ((NbrPolesInModel%2)?-1:1)^(k);
     Function RotatePZ[-k*NbrPolesInModel*2*Pi/NbrPolesTot]; }
         EndFor
-
+  */
 
       EndIf
     }
@@ -625,7 +625,7 @@ Formulation {
   }
 
  //-------------------------------------------------------------------------------------------
-// Mechanics
+ // Mechanics
 
   { Name Mechanical ; Type FemEquation ;
     Quantity {

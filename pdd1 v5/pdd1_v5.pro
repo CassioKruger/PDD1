@@ -6,7 +6,7 @@ Include "pdd1_v5_data.geo";
 
 DefineConstant
 [
-  Flag_AnalysisType = {1,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/19Type of analysis", Highlight "Blue",
+  Flag_AnalysisType = {0,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/19Type of analysis", Highlight "Blue",
     Help Str["- Use 'Static' to compute static fields created in the machine",
       "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
 
@@ -46,6 +46,9 @@ Group{
     Stator_Magnet~{k} = Region[ (STATOR_MAGNET+k-1) ];
     Stator_Magnets += Region[ Stator_Magnet~{k} ];
   EndFor
+
+  nbStatorInds = (Flag_Symmetry) ? NbrStatorPolesTot*NbrSectStatorTot/NbrStatorPolesTot : NbrSectStatorTot ;
+  Printf("NbrStatorPolesTot=%g, nbStatorInds=%g SymmetryFactor=%g", NbrStatorPolesTot, nbStatorInds, SymmetryFactor);
 
   //secondary rotor (modulators)
   Rotor2_Fe     = Region[ROTOR2_FE] ;
@@ -117,7 +120,7 @@ Group{
   StatorC  = Region[{}] ;
   StatorCC = Region[{Stator_Fe, Stator_Magnets}] ;
   RotorC   = Region[{}] ;
-  RotorCC  = Region[{Rotor_Fe, Rotor_Magnets}] ;
+  RotorCC  = Region[{Rotor_Fe, Rotor_Magnets }] ;
 
   Rotor2C   = Region[{}] ;
   Rotor2CC  = Region[{Rotor2_Fe}] ;

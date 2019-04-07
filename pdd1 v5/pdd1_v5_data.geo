@@ -15,7 +15,7 @@ DefineConstant[
   NbrPolesInModel = { 6, Choices{ 2="2",6="6"}, Name "Input/20Number of poles in FE model", Highlight "Blue"},
   InitialRotorAngle_deg = { 0, Name "Input/20Initial rotor angle [deg]", Highlight "AliceBlue"},
   InitialRotor2Angle_deg = { 0, Name "Input/20Initial rotor 2 angle [deg]", Highlight "AliceBlue"},
-  Flag_OpenStator = {1, Choices{0,1}, Name "Input/39Open slots in stator"}
+  Flag_OpenStator = {0, Choices{0,1}, Name "Input/39Open slots in stator"}
 ];
 
 NbrStatorPolesInModel = NbrPolesInModel*9;
@@ -104,7 +104,7 @@ m_s_out = 12;
 // Rotor
 ROTOR_FE     = 500 ;
 ROTOR_AIRGAP = 2000 ;
-ROTOR_MAGNET = 3000 ; // Index for first Magnet (1/8 model->1; full model->8)
+ROTOR_MAGNET = 60000 ; // Index for first Magnet (1/8 model->1; full model->8)
 
 ROTOR_BND_MOVING_BAND = 4000 ; // Index for first line (1/8 model->1; full model->8)
 ROTOR_BND_A0 = 5000 ;
@@ -124,7 +124,7 @@ SURF_INT     = 15000 ;
 // Stator
 STATOR_FE     = 16000 ;
 STATOR_AIR    = 17000 ;
-STATOR_MAGNET = 18000 ;
+STATOR_MAGNET = 40000 ;
 STATOR_AIRGAP = 19000 ;
 STATOR_SLOTOPENING = 20000 ; // Slot opening
 

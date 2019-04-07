@@ -141,10 +141,10 @@ EndFor
 Physical Surface(ROTOR_FE) = {RotorIron_[]};
 Physical Surface(ROTOR_AIRGAP) = {RotorAirgapLayer_[]};
 
-Physical Surface("RotorMagNORTE") = {RotorMagneticsNorth_[]};
+//Physical Surface("RotorMagNORTE") = {RotorMagneticsNorth_[]};
 Color Orchid {Surface{RotorMagneticsNorth_[]};}
 If (N_rs>1)
-	Physical Surface("RotorMagSUL") = {RotorMagneticsSouth_[]};
+	//Physical Surface("RotorMagSUL") = {RotorMagneticsSouth_[]};
 	Color Blue {Surface{RotorMagneticsSouth_[]};}
 EndIf
 

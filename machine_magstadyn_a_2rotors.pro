@@ -170,7 +170,7 @@ Group {
 
   Inds = Region[ {Stator_Inds, Rotor_Inds, Rotor2_Inds} ] ;
 
-  DomainM = Region[ {Stator_Magnets, Rotor_Magnets, Rotor2_Magnets} ] ;
+  DomainM = Region[ {Stator_Magnets, Rotor_Magnets} ] ;
   If(!Flag_ImposedCurrentDensity)
     DomainB = Region[ {Inds} ] ;
     DomainS = Region[ {} ];
@@ -856,7 +856,7 @@ Resolution {
             PostOperation[Mechanical] ;
           EndIf
 
-          ChangeOfCoordinates[ NodesOf[{Rotor2_Moving}], RotatePZ[delta_theta[]]];
+          ChangeOfCoordinates[ NodesOf[{Rotor2_Moving}], RotatePZ[-delta_theta[]]];
           If(!Flag_ImposedSpeed)
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];

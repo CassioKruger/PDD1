@@ -92,10 +92,10 @@ EndFor
 
 //--------------------------------SURFACES--------------------------------------------------------------//
 
-Physical Surface("StatorMagNORTE") = {StatorMagneticsNorth_[]};
+//Physical Surface("StatorMagNORTE") = {StatorMagneticsNorth_[]};
 Color Orchid {Surface{StatorMagneticsNorth_[]};}
 If (N_ss_mag>1)
-	Physical Surface("StatorMagSUL") = {StatorMagneticsSouth_[]};
+	//Physical Surface("StatorMagSUL") = {StatorMagneticsSouth_[]};
 	Color Blue {Surface{StatorMagneticsSouth_[]};}
 EndIf
 

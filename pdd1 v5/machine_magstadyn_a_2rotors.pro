@@ -377,9 +377,9 @@ Constraint {
           Coefficient ((NbrPolesInModel%2)?-1:1)^(k);
     Function RotatePZ[-k*NbrPolesInModel*2*Pi/NbrPolesTot]; }
         EndFor
-  */
+  
 
-      EndIf
+      EndIf*/
     }
   }
 

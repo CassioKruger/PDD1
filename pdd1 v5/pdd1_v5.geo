@@ -26,6 +26,6 @@ Show { Line{ nicepos_rotor[],nicepos_rotor2[], nicepos_stator[],nicepos_stator_m
 
 //For post-processing...
 View[PostProcessing.NbViews-1].Light = 0;
-View[PostProcessing.NbViews-1].NbIso = 80;              // Number of intervals
+View[PostProcessing.NbViews-1].NbIso = 60;              // Number of intervals
 View[PostProcessing.NbViews-1].IntervalsType = 1;       // 1 - Iso Values; 2 - Continuous Map
 

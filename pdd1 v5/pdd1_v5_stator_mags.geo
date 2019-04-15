@@ -10,6 +10,7 @@ R_gs = R_s_mag_in-AG;
 //Stator magnets
 SMag_ang = (7.2/2)*deg2rad;
 
+
 //build stator slots
 For i In {0:N_ss_mag-1}
 	 //build two halfs
@@ -20,13 +21,13 @@ For i In {0:N_ss_mag-1}
 	dP=newp;
 	 Point(dP+0) = {0,0,0,1.0};
 
-	 Point(dP+1) = {0, R_s_mag_in, 0, 1.0};												//magnet center
-	 Point(dP+2) = {R_s_mag_in*Sin(SMag_ang), R_s_mag_in*Cos(SMag_ang), 0, 2.4*m_gap};	//magnet sector (borda)
-	 Point(dP+3) = {R_sin*Sin(SMag_ang),R_sin*Cos(SMag_ang),0,1.0};						//magnet sector to inner stator
-	 Point(dP+4) = {0, R_sin, 0, 1.5*m_gap};											//magnet center to inner stator
+	 Point(dP+1) = {0, R_s_mag_in, 0, pMB};												//magnet center
+	 Point(dP+2) = {R_s_mag_in*Sin(SMag_ang), R_s_mag_in*Cos(SMag_ang), 0, pMB};	//magnet sector (borda)
+	 Point(dP+3) = {R_sin*Sin(SMag_ang),R_sin*Cos(SMag_ang),0,pslo};						//magnet sector to inner stator
+	 Point(dP+4) = {0, R_sin, 0, pslo};											//magnet center to inner stator
 	 
-	 Point(dP+5) = {0, R_gs, 0, 1.5*m_gap};												//sliding center
-	 Point(dP+6) = {R_gs*Sin(SMag_ang), R_gs*Cos(SMag_ang), 0, 2.4*m_gap}; 				//sliding sector
+	 Point(dP+5) = {0, R_gs, 0, pMB};												//sliding center
+	 Point(dP+6) = {R_gs*Sin(SMag_ang), R_gs*Cos(SMag_ang), 0, pMB}; 				//sliding sector
 
 
 	 // rotate the built points to the i-th slot position

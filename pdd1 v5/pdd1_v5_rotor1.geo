@@ -19,23 +19,15 @@ For i In {0:N_rs-1}
 	 //Points definitions-----------------------------------------------------------------//
 	 //points of one half
 		dP=newp;
-		Point(dP+0) = {0,0,0,m_coarse};
-		 //primeiro ponto da base da seção do rotor
-		Point(dP+1) = {0,R_rin,0,m_normal};
-		 //ponto mais a direita da base da seção do rotor
-		Point(dP+2) = {Cos((Pi/2)-aux1)*R_rin,Sin((Pi/2)-aux1)*R_rin,0,m_normal};
-		 //primeiro ponto da parte superior da seção do rotor
-		Point(dP+3)={0,R_rout,0,m_normal};
-		 //ponto mais a direita da parte ro rotor na seção (metal)
-		Point(dP+4) = {Cos((Pi/2)-aux1)*R_rout,Sin((Pi/2)-aux1)*R_rout,0,m_normal};
-		 //ponto mais a cima do imã
-		Point(dP+5) = {0,R_rout+h_m,0,m_normal};
-		 //ponto mais a direita do imã, na borda da seção
-		Point(dP+6) = {Cos((Pi/2)-aux1)*(R_rout+h_m),Sin((Pi/2)-aux1)*(R_rout+h_m),0,m_normal};
-		 //sliding - centro
-		Point(dP+7) = {0,R_gr,0,m_normal};
-		 //sliding - borda da seção
-		Point(dP+8) = {Cos((Pi/2)-aux1)*(R_gr),Sin((Pi/2)-aux1)*(R_gr),0,m_normal};
+		Point(dP+0) = {0,0,0,pout*1.5};		 											 		
+		Point(dP+1) = {0,R_rin,0,pout*1.5};		 										 			//primeiro ponto da base da seção do rotor
+		Point(dP+2) = {Cos((Pi/2)-aux1)*R_rin,Sin((Pi/2)-aux1)*R_rin,0,pout*1.5};		 			//ponto mais a direita da base da seção do rotor
+		Point(dP+3)={0,R_rout,0,psl*2.6};												 			//primeiro ponto da parte superior da seção do rotor
+		Point(dP+4) = {Cos((Pi/2)-aux1)*R_rout,Sin((Pi/2)-aux1)*R_rout,0,psl*2.6};		 		//ponto mais a direita da parte ro rotor na seção (metal)
+		Point(dP+5) = {0,R_rout+h_m,0,psl*2.6};		 								 			//ponto mais a cima do imã
+		Point(dP+6) = {Cos((Pi/2)-aux1)*(R_rout+h_m),Sin((Pi/2)-aux1)*(R_rout+h_m),0,psl*2.6};	//ponto mais a direita do imã, na borda da seção
+		Point(dP+7) = {0,R_gr,0,pMB*2};		 													//sliding - centro
+		Point(dP+8) = {Cos((Pi/2)-aux1)*(R_gr),Sin((Pi/2)-aux1)*(R_gr),0,pMB*2};					//sliding - borda da seção
 	 //Points definitions-----------------------------------------------------------------//
 	
 	For t In {dP+0:dP+8}
@@ -51,26 +43,19 @@ For i In {0:N_rs-1}
 	 //Lines definitions-----------------------------------------------------------------//
 	//lines of one half
 		dR=newl-1;
-		 //arco da base da seção
-		Circle(dR+1) = {dP+1,dP+0,dP+2};
-		 //linha do centro da seção (entre R_rin e R_rout)
-		Line(dR+2) = {dP+1,dP+3};
-		 //linha da borda da seção (entre R_rin e R_rout)
-		Line(dR+3) = {dP+2,dP+4};
-		 //arco externo do rotor
-		Circle(dR+4) = {dP+3,dP+0,dP+4}; 
-		 //linha centro da seção (ligando rotor e imã)
-		Line(dR+5) = {dP+3,dP+5};
-		 //linha borda da seção (ligando rotor e imã)
-		Line(dR+6) = {dP+4,dP+6};
-		 //borda externa do imã
-		Circle(dR+7) = {dP+5,dP+0,dP+6};
-		 //linha centro da seção (imã e airgap)
-		Line(dR+8) = {dP+5,dP+7};
-		 //sliding (entreferro e imã)
-		Circle(dR+9) = {dP+7,dP+0,dP+8};
-		 //linha borda da seção (sliding entreferro e imã)
-		Line(dR+10) = {dP+8,dP+6};
+		 
+		Circle(dR+1) = {dP+1,dP+0,dP+2};			//arco da base da seção		 
+		Line(dR+2) = {dP+1,dP+3};					//linha do centro da seção (entre R_rin e R_rout)		 
+		Line(dR+3) = {dP+2,dP+4};					//linha da borda da seção (entre R_rin e R_rout)		 
+		Circle(dR+4) = {dP+3,dP+0,dP+4}; 			//arco externo do rotor		 
+		Line(dR+5) = {dP+3,dP+5};					//linha centro da seção (ligando rotor e imã)		 
+		Line(dR+6) = {dP+4,dP+6};					//linha borda da seção (ligando rotor e imã)		 
+		Circle(dR+7) = {dP+5,dP+0,dP+6};			//borda externa do imã		 
+		Line(dR+8) = {dP+5,dP+7}; 					//linha centro da seção (imã e airgap)		 
+		Circle(dR+9) = {dP+7,dP+0,dP+8};			//sliding (entreferro e imã)		 
+		Line(dR+10) = {dP+8,dP+6};					//linha borda da seção (sliding entreferro e imã)
+
+		Transfinite Line {dR+7, dR+9} = 60 Using Progression 1;
 	 //Lines definitions-----------------------------------------------------------------//
 
 

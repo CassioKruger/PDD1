@@ -22,14 +22,14 @@ For i In {0:N_ss_mag-1}
 	dP=newp;
 	 Point(dP+0) = {0,0,0,m_coarse};
 	 
-	 Point(dP+1) = {0,BottomSliding,0,m_normal};																			//bottom sliding center	 
-	 Point(dP+2) = {Cos((Pi/2)-Modulator_ang)*(BottomSliding),Sin((Pi/2)-Modulator_ang)*(BottomSliding),0,m_normal};		//bottom sliding sector	
-	 Point(dP+3) = {0,BottomModulator,0,m_normal};																		//bottom modulator center
-	 Point(dP+4) = {Cos((Pi/2)-Modulator_ang)*(BottomModulator),Sin((Pi/2)-Modulator_ang)*(BottomModulator),0,m_normal};	//bottom modulator sector
-	 Point(dP+5) = {0,TopModulator,0,m_normal};																			//top modulator center
-	 Point(dP+6) = {Cos((Pi/2)-Modulator_ang)*(TopModulator),Sin((Pi/2)-Modulator_ang)*(TopModulator),0,m_normal};		//top modulator sector
- 	 Point(dP+7) = {0,TopSliding,0,m_normal};																			//top sliding center	 
-	 Point(dP+8) = {Cos((Pi/2)-Modulator_ang)*(TopSliding),Sin((Pi/2)-Modulator_ang)*(TopSliding),0,m_normal};			//top sliding sector	
+	 Point(dP+1) = {0,BottomSliding,0,pMB};																			//bottom sliding center	 
+	 Point(dP+2) = {Cos((Pi/2)-Modulator_ang)*(BottomSliding),Sin((Pi/2)-Modulator_ang)*(BottomSliding),0,pMB};		//bottom sliding sector	
+	 Point(dP+3) = {0,BottomModulator,0,psl};																			//bottom modulator center
+	 Point(dP+4) = {Cos((Pi/2)-Modulator_ang)*(BottomModulator),Sin((Pi/2)-Modulator_ang)*(BottomModulator),0,psl};	//bottom modulator sector
+	 Point(dP+5) = {0,TopModulator,0,psl};																				//top modulator center
+	 Point(dP+6) = {Cos((Pi/2)-Modulator_ang)*(TopModulator),Sin((Pi/2)-Modulator_ang)*(TopModulator),0,psl};			//top modulator sector
+ 	 Point(dP+7) = {0,TopSliding,0,pMB};																				//top sliding center	 
+	 Point(dP+8) = {Cos((Pi/2)-Modulator_ang)*(TopSliding),Sin((Pi/2)-Modulator_ang)*(TopSliding),0,pMB};				//top sliding sector	
 
 		// rotate the built points to the i-th slot position
 	 For t In {dP+0:dP+8}
@@ -52,6 +52,7 @@ For i In {0:N_ss_mag-1}
 	 Line(dR+5) = {dP+3,dP+5};				//modulator center
 	 Line(dR+6) = {dP+4,dP+6};				//modulator sector
 	 Circle(dR+7) = {dP+5,dP+0,dP+6};		//top modulator
+	 Transfinite Line {dR+7, dR+4} = 30 Using Progression 1;
 
 	 Line(dR+8) = {dP+5,dP+7}; 				//top sliding center
 	 Line(dR+9) = {dP+6,dP+8}; 				//top sliding sector

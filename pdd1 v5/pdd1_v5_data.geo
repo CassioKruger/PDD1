@@ -78,7 +78,7 @@ DefineConstant
 sigma_fe = 0. ; // laminated steel
 DefineConstant
 [
-  mur_fe = {10000, Name StrCat[pp, "Relative permeability for linear case"]},   //default = 1000
+  mur_fe = {1000, Name StrCat[pp, "Relative permeability for linear case"]},   //default = 1000
   b_remanent = {1.2, Name StrCat[pp, "Remanent induction [T]"] }
 ];
 

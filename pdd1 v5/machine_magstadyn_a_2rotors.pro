@@ -208,7 +208,9 @@ Group {
   EndIf
 
   DomainKin = Region[1234] ; // Dummy region number for mechanical equation
+  DomainKin2 = Region[2345] ;
   DomainDummy = Region[12345] ; // Dummy region number for postpro with functions
+  DomainDummy2 = Region[23456] ;
 }
 
 

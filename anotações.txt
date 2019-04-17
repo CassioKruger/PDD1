@@ -37,3 +37,6 @@ lab-lsc04:
 instalar gmsh 3.0.6
 instalar getdp 3.0.4
 
+fonte para vscode
+Consolas, 'Courier New', monospace 
+

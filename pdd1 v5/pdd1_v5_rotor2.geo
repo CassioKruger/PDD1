@@ -20,7 +20,7 @@ For i In {0:N_ss_mag-1}
 
 	//Points
 	dP=newp;
-	 Point(dP+0) = {0,0,0,m_coarse};
+	 Point(dP+0) = {0,0,0,1.0};
 	 
 	 Point(dP+1) = {0,BottomSliding,0,pMB};																			//bottom sliding center	 
 	 Point(dP+2) = {Cos((Pi/2)-Modulator_ang)*(BottomSliding),Sin((Pi/2)-Modulator_ang)*(BottomSliding),0,pMB};		//bottom sliding sector	

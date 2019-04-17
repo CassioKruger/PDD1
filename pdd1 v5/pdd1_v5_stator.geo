@@ -48,7 +48,7 @@ For i In {0:N_ss-1}
 	 //pontos de uma metade(direita) do slot (ranhura)
 	 //Points	 
 	 dP=newp;
-	 Point(dP+0) = {0,0,0,m_coarse};
+	 Point(dP+0) = {0,0,0,1.0};
 	 
 	 Point(dP+1) = {b_1/2, R_sin*Sin((Pi/2)-aux2), 0, pslo};					//entrada direita do slot
 	 Point(dP+2) = {b_1/2, h_r1-Sin(aux1)*r1, 0, pslo};

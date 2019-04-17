@@ -15,10 +15,10 @@ nicepos_stator_mag[] = {};
 
 // some characteristic lengths...
 //----------------------------------------
-pslo = mm * 2*2/2/1.5; // slot opening
-psl  = mm * 1.8; // upper part slot
-pout = mm * 8; // outer radius
-pMB  = mm * 0.8 * 2/2; // MB
+pslo = mm * 3*2/2/1.5; // slot opening
+psl  = mm * 2.2; // upper part slot
+pout = mm * 12; // outer radius
+pMB  = mm * 1 * 2/2; // MB
 p  = mm*12*0.05*1.3;    //rotor 
 
 Include "pdd1_v5_stator.geo" ;

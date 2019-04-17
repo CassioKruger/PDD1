@@ -41,7 +41,7 @@ Group {
     Surf_bn0, Surf_Inf, Point_ref,
     PhaseA, PhaseB, PhaseC, PhaseA_pos, PhaseB_pos, PhaseC_pos,
     Resistance_Cir, Inductance_Cir, Capacitance_Cir, DomainZt_Cir, DomainSource_Cir,
-    Dummy, Dummy2
+    Dummy
   ];
   // Exception: the group 'MovingBand_PhysicalNb' needs contain exactly one region
   // to pass a test done by the parser. It is declared with a dummy region "0".
@@ -181,7 +181,7 @@ Group {
     DomainS = Region[ {Inds} ];
   EndIf
   DomainPlotMovingGeo = Region[{Dummy}];
-  DomainPlotMovingGeo2 = Region[{Dummy2}];
+  
 
   Stator  = Region[{ StatorC, StatorCC }];
   Rotor   = Region[{ RotorC, RotorCC }];
@@ -347,44 +347,7 @@ Constraint {
     Case {
       { Region Surf_Inf ; Type Assign; Value 0. ; }
       { Region Surf_bn0 ; Type Assign; Value 0. ; }
-  /*
-      If(Flag_Symmetry)
-        { Region Surf_cutA1; SubRegion Region[{Surf_Inf,Surf_bn0, Point_ref}]; Type Link;
-          RegionRef Surf_cutA0; SubRegionRef Region[{Surf_Inf,Surf_bn0, Point_ref}];
-          Coefficient ((NbrPolesInModel%2)?-1:1) ;
-    Function RotatePZ[-NbrPolesInModel*2*Pi/NbrPolesTot]; }
-        { Region Surf_cutA1; Type Link; RegionRef Surf_cutA0;
-          Coefficient (NbrPolesInModel%2)?-1:1 ;
-    Function RotatePZ[-NbrPolesInModel*2*Pi/NbrPolesTot]; }
-
-
-        //For the moving band
-        For k In {1:SymmetryFactor-1}
-        { Region Rotor_Bnd_MB~{k+1} ;
-    SubRegion Rotor_Bnd_MB~{(k!=SymmetryFactor-1)?k+2:1}; Type Link;
-          RegionRef Rotor_Bnd_MB_1; SubRegionRef Rotor_Bnd_MB_2;
-          Coefficient ((NbrPolesInModel%2)?-1:1)^(k);
-    Function RotatePZ[-k*NbrPolesInModel*2*Pi/NbrPolesTot]; }
-        EndFor
-
-        For k In {1:SymmetryFactor-1}
-        { Region Rotor2_Top_Bnd_MB~{k+1} ;
-    SubRegion Rotor2_Top_Bnd_MB~{(k!=SymmetryFactor-1)?k+2:1}; Type Link;
-          RegionRef Rotor2_Top_Bnd_MB_1; SubRegionRef Rotor2_Top_Bnd_MB_2;
-          Coefficient ((NbrPolesInModel%2)?-1:1)^(k);
-    Function RotatePZ[-k*NbrPolesInModel*2*Pi/NbrPolesTot]; }
-        EndFor
-
-        For k In {1:SymmetryFactor-1}
-        { Region Rotor2_Bottom_Bnd_MB~{k+1} ;
-    SubRegion Rotor2_Bottom_Bnd_MB~{(k!=SymmetryFactor-1)?k+2:1}; Type Link;
-          RegionRef Rotor2_Bottom_Bnd_MB_1; SubRegionRef Rotor2_Bottom_Bnd_MB_2;
-          Coefficient ((NbrPolesInModel%2)?-1:1)^(k);
-    Function RotatePZ[-k*NbrPolesInModel*2*Pi/NbrPolesTot]; }
-        EndFor
   
-
-      EndIf*/
     }
   }
 
@@ -678,7 +641,7 @@ Formulation {
     }
     Equation {
       GlobalTerm { DtDof [ Inertia * Dof{V} , {V} ] ; In DomainKin ; }
-      GlobalTerm { [ Friction[] * Dof{V} , {V} ] ; In DomainKin ; }
+      //GlobalTerm { [ Friction[] * Dof{V} , {V} ] ; In DomainKin ; }
       GlobalTerm { [        Torque_mec[] , {V} ] ; In DomainKin ; }
       GlobalTerm { [       -Torque_mag[] , {V} ] ; In DomainKin ; }
 
@@ -688,7 +651,7 @@ Formulation {
       //---------------------------------------------------------------//
 
       GlobalTerm { DtDof [ Inertia * Dof{V2} , {V2} ] ; In DomainKin2 ; }
-      GlobalTerm { [ Friction[] * Dof{V2} , {V2} ] ; In DomainKin2 ; }
+      //GlobalTerm { [ Friction[] * Dof{V2} , {V2} ] ; In DomainKin2 ; }
       GlobalTerm { [        Torque_mec[] , {V2} ] ; In DomainKin2 ; }
       GlobalTerm { [       -Torque_mag[] , {V2} ] ; In DomainKin2 ; }
 
@@ -709,10 +672,10 @@ Resolution {
         { Name A ; NameOfFormulation MagStaDyn_a_2D ; Type ComplexValue ; Frequency Freq ; }
       EndIf
       If(Flag_AnalysisType<2)
-        { Name A ; NameOfFormulation MagStaDyn_a_2D ; }
+        { Name A ; NameOfFormulation MagStaDyn_a_2D ; }        
         If(Flag_ImposedSpeed) // Full dynamics
           { Name M ; NameOfFormulation Mechanical ; }
-        EndIf
+        EndIf       
       EndIf
     }
     Operation {
@@ -740,6 +703,8 @@ Resolution {
   DeleteFile[StrCat[ResDir,"JL_Fe",ExtGnuplot]];
   DeleteFile[StrCat[ResDir,"P",ExtGnuplot]];
   DeleteFile[StrCat[ResDir,"V",ExtGnuplot]];
+  DeleteFile[StrCat[ResDir,"P2",ExtGnuplot]];
+  DeleteFile[StrCat[ResDir,"V2",ExtGnuplot]];
   DeleteFile[StrCat[ResDir,"Irotor",ExtGnuplot]];
       EndIf
 
@@ -790,10 +755,10 @@ Resolution {
         If(Flag_PrintFields)
           PostOperation[Get_LocalFields] ;
         EndIf
-
-        If(!Flag_ImposedSpeed) // Full dynamics
+        
+        If(Flag_ImposedSpeed) // Full dynamics
           InitSolution[M];
-          InitSolution[M]; // Twice for avoiding warning (a = d_t^2 x)
+	        InitSolution[M]; // Twice for avoiding warning (a = d_t^2 x)
         EndIf
 
         TimeLoopTheta[time0, timemax, delta_time, 1.]{
@@ -823,33 +788,31 @@ Resolution {
             Evaluate[ $Trotor = 0 ];
             Evaluate[ $Trotor2 = 0 ];
 
-            Evaluate[ $Vrotor1 = 0 ];
+           /* Evaluate[ $Vrotor1 = 0 ];
             Evaluate[ $Protor1 = 0 ];
 
             Evaluate[ $Vrotor2 = 0 ];
-            Evaluate[ $Protor2 = 0 ];
+            Evaluate[ $Protor2 = 0 ];*/
           }
           If(Flag_ImposedSpeed)
             Generate[M]; Solve[M]; SaveSolution[M];
-            PostOperation[Mechanical] ;            
-          EndIf
+            PostOperation[Mechanical] ;
+          EndIf         
+          
 
           ChangeOfCoordinates[ NodesOf[Rotor_Moving], RotatePZ[delta_theta[]]];
           If(Flag_ImposedSpeed)
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];
-            Evaluate[ $PreviousSpeed = $Speed ];            
+            //Evaluate[ $PreviousSpeed = $Speed ];            
           EndIf
 
           ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[delta_theta[]]];
           If(Flag_ImposedSpeed)
             // Keep track of previous position
             Evaluate[ $PreviousPosition2 = $Position2 ];
-            Evaluate[ $PreviousSpeed2 = $Speed2 ];
+            //Evaluate[ $PreviousSpeed2 = $Speed2 ];
           EndIf
-
-          //PostOperation[Mechanical];
-          //PostOperation[Get_Torque]
 
           MeshMovingBand2D[MB] ;                    
           MeshMovingBand2D[MB2] ;
@@ -869,7 +832,7 @@ PostProcessing {
      { Name az ; Value { Term { [ CompZ[{a}] ] ; In Domain ; Jacobian Vol ; } } }
 
      { Name b  ; Value { Term { [ {d a} ] ; In Domain ; Jacobian Vol ; } } }
-     { Name boundary  ; Value { Term { [ 1 ] ; In DomainPlotMovingGeo ; Jacobian Vol ; } } } // Dummy value - for visualization
+     { Name boundary  ; Value { Term { [ 1 ] ; In DomainPlotMovingGeo ; Jacobian Vol ; } } } 
      { Name b_radial ;
        Value { Term { [ {d a}* Vector[  Cos[AngularPosition[]#4], Sin[#4], 0.] ] ;
      In Domain ; Jacobian Vol ; } } }
@@ -1254,7 +1217,7 @@ PostOperation Get_GlobalQuantities UsingPost MagStaDyn_a_2D {
    SendToServer StrCat[poJL,"rotor"]{0}, Color "LightYellow" ];
   //rotor 2
   Print[ JouleLosses[Rotor2], OnGlobal, Format TimeTable,
-   File > StrCat[ResDir,"JL",ExtGnuplot], LastTimeStepOnly,
+   File > StrCat[ResDir,"JL2",ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[poJL,"rotor2"]{0}, Color "LightYellow" ];
   //rotor 1 
   Print[ JouleLosses[Rotor_Fe], OnGlobal, Format TimeTable,
@@ -1262,7 +1225,7 @@ PostOperation Get_GlobalQuantities UsingPost MagStaDyn_a_2D {
    SendToServer StrCat[poJL,"rotor_fe"]{0}, Color "LightYellow" ];
   //rotor 2
   Print[ JouleLosses[Rotor2_Fe], OnGlobal, Format TimeTable,
-   File > StrCat[ResDir,"JL_Fe",ExtGnuplot], LastTimeStepOnly,
+   File > StrCat[ResDir,"JL_Fe2",ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[poJL,"rotor2_fe"]{0}, Color "LightYellow" ];
    
 }
@@ -1274,7 +1237,7 @@ PostOperation Get_Torque UsingPost MagStaDyn_a_2D {
    SendToServer StrCat[po_mecT, "rotor"]{0}, Color "Ivory" ];
   //rotor 2
   Print[ Torque_Maxwell[Rotor2_Airgap], OnGlobal, Format TimeTable,
-    File > StrCat[ResDir,"Tr",ExtGnuplot], LastTimeStepOnly, StoreInVariable $Trotor2,
+    File > StrCat[ResDir,"Tr2",ExtGnuplot], LastTimeStepOnly, StoreInVariable $Trotor2,
    SendToServer StrCat[po_mecT, "rotor2"]{0}, Color "Ivory" ];
 
   Print[ Torque_Maxwell[Stator_Airgap], OnGlobal, Format TimeTable,
@@ -1289,7 +1252,7 @@ PostOperation Get_Torque_cplx UsingPost MagStaDyn_a_2D {
    SendToServer StrCat[po_mecT, "rotor"]{0}, Color "Ivory" ];
   //rotor 2
   Print[ Torque_Maxwell_cplx[Rotor2_Airgap], OnGlobal, Format TimeTable,
-   File > StrCat[ResDir,"Tr",ExtGnuplot], StoreInVariable $Trotor2,
+   File > StrCat[ResDir,"Tr2",ExtGnuplot], StoreInVariable $Trotor2,
    SendToServer StrCat[po_mecT, "rotor"]{0}, Color "Ivory" ];
 
   Print[ Torque_Maxwell_cplx[Stator_Airgap], OnGlobal, Format TimeTable,
@@ -1299,31 +1262,31 @@ PostOperation Get_Torque_cplx UsingPost MagStaDyn_a_2D {
 
 PostOperation Mechanical UsingPost Mechanical {
   
-  Print[ P, OnRegion DomainKin, Format TimeTable,
+  Print[ P, OnRegion DomainKin, Format Table,
    File > StrCat[ResDir,"P", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Position,
    SendToServer StrCat[po_mecRotor1 ,"Position [rad]"]{0}, Color "Red4"] ;
-  Print[ Pdeg, OnRegion DomainKin, Format TimeTable,
-   File > StrCat[ResDir,"P_deg", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Protor1,
+  Print[ Pdeg, OnRegion DomainKin, Format Table,
+   File > StrCat[ResDir,"P_deg", ExtGnuplot], LastTimeStepOnly, 
    SendToServer StrCat[po_mecRotor1 ,"Position [deg]"]{0}, Color "Red4"] ;
-  Print[ V, OnRegion DomainKin, Format TimeTable,
-   File > StrCat[ResDir,"V", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Speed,
+  Print[ V, OnRegion DomainKin, Format Table,
+   File > StrCat[ResDir,"V", ExtGnuplot], LastTimeStepOnly, 
    SendToServer StrCat[po_mecRotor1 ,"Velocity [rad\s]"]{0}, Color "Red1"] ;//MediumPurple1
-  Print[ Vrpm, OnRegion DomainKin, Format TimeTable,
+  Print[ Vrpm, OnRegion DomainKin, Format Table,
    File > StrCat[ResDir,"Vrpm", ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[po_mecRotor1 ,"Velocity [rpm]"]{0}, Color "Red1"] ;//MediumPurple1
 
     //------------------------------------------------------------------//
-    //MB2
-  Print[ P2, OnRegion DomainKin2, Format TimeTable,
+    //MB2 Friction
+  Print[ P2, OnRegion DomainKin2, Format Table,
    File > StrCat[ResDir,"P2", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Position2,
    SendToServer StrCat[po_mecRotor2,"Position2 [rad]"]{0}, Color "ForestGreen"] ;
-  Print[ Pdeg2, OnRegion DomainKin2, Format TimeTable,
-   File > StrCat[ResDir,"P_deg2", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Protor2,
+  Print[ Pdeg2, OnRegion DomainKin2, Format Table,
+   File > StrCat[ResDir,"P_deg2", ExtGnuplot], LastTimeStepOnly, 
    SendToServer StrCat[po_mecRotor2,"Position2 [deg]"]{0}, Color "ForestGreen"] ;
-  Print[ V2, OnRegion DomainKin2, Format TimeTable,
-   File > StrCat[ResDir,"V2", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Speed2,
+  Print[ V2, OnRegion DomainKin2, Format Table,
+   File > StrCat[ResDir,"V2", ExtGnuplot], LastTimeStepOnly, 
    SendToServer StrCat[po_mecRotor2,"Velocity2 [rad\s]"]{0}, Color "Green"] ;//MediumPurple1
-  Print[ Vrpm2, OnRegion DomainKin2, Format TimeTable,
+  Print[ Vrpm2, OnRegion DomainKin2, Format Table,
    File > StrCat[ResDir,"Vrpm2", ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[po_mecRotor2,"Velocity2 [rpm]"]{0}, Color "Green"] ;//MediumPurple1
 }

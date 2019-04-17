@@ -44,3 +44,14 @@ View[PostProcessing.NbViews-1].IntervalsType = 1;       // 1 - Iso Values; 2 - C
 View[PostProcessing.NbViews-1].LineWidth = 2;           // espessura linha
 View[PostProcessing.NbViews-1].ColormapNumber = 2;      // color map - 2 default - 10 B&W
 
+General.Trackball = 0;
+General.RotationX = 0; 
+General.RotationY = 0; 
+General.RotationZ = 0;
+General.Color.Background = White; 
+General.Color.Foreground = Black;
+General.Color.Text = Black;
+General.Orthographic = 0;
+General.Axes = 0; 
+General.SmallAxes = 0;
+

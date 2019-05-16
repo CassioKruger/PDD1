@@ -640,7 +640,7 @@ Formulation {
       { Name P2 ; Type Global ; NameOfSpace Position2 [P2] ; } // position   MB2
     }
     Equation {
-      GlobalTerm { DtDof [ Inertia * Dof{V} , {V} ] ; In DomainKin ; }
+      GlobalTerm { DtDof [ /*Inertia **/ Dof{V} , {V} ] ; In DomainKin ; }
       //GlobalTerm { [ Friction[] * Dof{V} , {V} ] ; In DomainKin ; }
       GlobalTerm { [        Torque_mec[] , {V} ] ; In DomainKin ; }
       GlobalTerm { [       -Torque_mag[] , {V} ] ; In DomainKin ; }
@@ -650,7 +650,7 @@ Formulation {
 
       //---------------------------------------------------------------//
 
-      GlobalTerm { DtDof [ Inertia*0.7 * Dof{V2} , {V2} ] ; In DomainKin2 ; }
+      GlobalTerm { DtDof [ /*Inertia*0.7 **/ Dof{V2} , {V2} ] ; In DomainKin2 ; }
       //GlobalTerm { [ Friction[] * Dof{V2} , {V2} ] ; In DomainKin2 ; }
       //GlobalTerm { [        Torque_mec[] , {V2} ] ; In DomainKin2 ; }
       GlobalTerm { [       -Torque_mag[] , {V2} ] ; In DomainKin2 ; }

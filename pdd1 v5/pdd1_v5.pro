@@ -6,19 +6,20 @@ Include "pdd1_v5_data.geo";
 
 DefineConstant
 [
-  Flag_AnalysisType = {0,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/19Type of analysis", Highlight "Blue",
-    Help Str["- Use 'Static' to compute static fields created in the machine",
-      "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
+  Flag_AnalysisType = {1, Choices{0="Static",  1="Time domain", 2="Freq Domain"}, 
+                          Name "Input/19Type of analysis", Highlight "Blue",
+                          Help Str["- Use 'Static' to compute static fields created in the machine",
+                          "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
 
   Flag_SrcType_Stator = { 0, Choices{0="None",1="Current"},
-    Name "Input/41Source type in stator", Highlight "Blue"},
+                             Name "Input/41Source type in stator", Highlight "Blue"},
 
   Flag_NL = { 1, Choices{0,1}, Name "Input/60Nonlinear BH-curve"},
 
   Flag_NL_law_Type = { 0, Choices{
-      0="Analytical", 1="Interpolated",
-      2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
-    Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
+                       0="Analytical", 1="Interpolated",
+                       2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
+                       Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
 ];
 
 Flag_Cir = !Flag_SrcType_Stator ;
@@ -166,23 +167,14 @@ Function {
     br[ Stator_Magnet~{k} ] =0; //(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
-
   //Data for modeling a stranded inductor
   NbWires[]  = 104 ; // Number of wires per slot
   // STATOR_IND_AM comprises all the slots in that phase, we need thus to divide by the number of slots
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface
-  //Torque_mec[] = 10;
+  Torque_mec[] = 1000;
+  
   //--------------------------------------------------
-/*
-  Surface_PM[] = SurfaceArea[]{ROTOR_MAGNET};
-
-  DefineConstant[ SurfPM = {Surface_PM[ROTOR_MAGNET], ReadOnly 1,
-                          Path "Output/2", Highlight "LightYellow" } ];
-*/
-  //--------------------------------------------------
-
-
   FillFactor_Winding = 0.5 ; // percentage of Cu in the surface coil side, smaller than 1
   Factor_R_3DEffects = 1.5 ; // bigger than Adding 50% of resistance
 
@@ -213,10 +205,10 @@ Function {
   DefineConstant
   [
     NbTurns  = { (thetaMax-theta0)/(2*Pi), Name "Input/24Number of revolutions",
-      Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)},
+                  Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)},
 
-    delta_theta_deg = { 1., Name "Input/22Step [deg]",
-      Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
+    delta_theta_deg = { 1, Name "Input/22Step [deg]",
+                        Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
   ];
 
   delta_theta[] = delta_theta_deg * deg2rad ;
@@ -228,7 +220,7 @@ Function {
   DefineConstant
   [
     NbSteps = { Ceil[(timemax-time0)/delta_time], Name "Input/23Number of steps",
-      Highlight "LightGrey", ReadOnly 10, Visible (Flag_AnalysisType==1)}
+                Highlight "LightGrey", ReadOnly 10, Visible (Flag_AnalysisType==1)}
   ];
 
   RotorPosition[] = InitialRotorAngle + $Time * wr ;
@@ -245,9 +237,9 @@ Function {
   DefineConstant
   [
     ID = { 0, Name "Input/50Id stator current",
-      Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)},
+          Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)},
     IQ = { Inominal, Name "Input/51Iq stator current",
-      Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)}
+          Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)}
   ] ;
 
   II = Inominal;

@@ -650,9 +650,9 @@ Formulation {
 
       //---------------------------------------------------------------//
 
-      GlobalTerm { DtDof [ Inertia * Dof{V2} , {V2} ] ; In DomainKin2 ; }
+      GlobalTerm { DtDof [ Inertia*0.7 * Dof{V2} , {V2} ] ; In DomainKin2 ; }
       //GlobalTerm { [ Friction[] * Dof{V2} , {V2} ] ; In DomainKin2 ; }
-      GlobalTerm { [        Torque_mec[] , {V2} ] ; In DomainKin2 ; }
+      //GlobalTerm { [        Torque_mec[] , {V2} ] ; In DomainKin2 ; }
       GlobalTerm { [       -Torque_mag[] , {V2} ] ; In DomainKin2 ; }
 
       GlobalTerm { DtDof [ Dof{P2} , {P2} ] ; In DomainKin2 ; }

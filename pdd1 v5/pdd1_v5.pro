@@ -159,11 +159,11 @@ Function {
 
   // For a radial remanent b
   For k In {1:nbMagnets}
-    br[ Rotor_Magnet~{k} ] = (-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Rotor_Magnet~{k} ] =0; //(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
   For k In {1:nbMagnetsStator}
-    br[ Stator_Magnet~{k} ] = (-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Stator_Magnet~{k} ] =0; //(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
 
@@ -172,6 +172,7 @@ Function {
   // STATOR_IND_AM comprises all the slots in that phase, we need thus to divide by the number of slots
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface
+  //Torque_mec[] = 10;
   //--------------------------------------------------
 /*
   Surface_PM[] = SurfaceArea[]{ROTOR_MAGNET};
@@ -233,7 +234,7 @@ Function {
   RotorPosition[] = InitialRotorAngle + $Time * wr ;
   RotorPosition_deg[] = RotorPosition[]*180/Pi;
 
-  Rotor2Position[] = InitialRotor2Angle + $Time * wr ;
+  Rotor2Position[] = InitialRotor2Angle + $Time * 0 ;
   Rotor2Position_deg[] = Rotor2Position[]*180/Pi;
 
 //+++

@@ -82,7 +82,7 @@ DefineConstant
   b_remanent = {1.2, Name StrCat[pp, "Remanent induction [T]"] }
 ];
 
-rpm_nominal = 300 ;
+rpm_nominal = 1200;
 Inominal = 10.9 ; // Nominal current
 Tnominal = 2.5 ; // Nominal torque
 

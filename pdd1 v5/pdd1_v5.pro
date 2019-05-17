@@ -160,11 +160,11 @@ Function {
 
   // For a radial remanent b
   For k In {1:nbMagnets}
-    br[ Rotor_Magnet~{k} ] =0; //(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Rotor_Magnet~{k} ] = 0;//(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
   For k In {1:nbMagnetsStator}
-    br[ Stator_Magnet~{k} ] =0; //(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Stator_Magnet~{k} ] =(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
   //Data for modeling a stranded inductor
@@ -196,7 +196,7 @@ Function {
 
   DefineConstant
   [ 
-    thetaMax_deg = { 10, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }  
+    thetaMax_deg = { 30, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }  
   ];
 
   theta0   = InitialRotorAngle + 0. ;

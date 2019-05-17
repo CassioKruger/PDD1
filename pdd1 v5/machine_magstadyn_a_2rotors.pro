@@ -761,7 +761,7 @@ Resolution {
 	        InitSolution[M]; // Twice for avoiding warning (a = d_t^2 x)
         EndIf
 
-        TimeLoopTheta[time0, timemax, delta_time, 1.]{
+        TimeLoopTheta[time0, timemax, delta_time, 1]{
     // Euler implicit (1) -- Crank-Nicolson (0.5)
     // FIXME like this theta cannot be controlled by the user
           If(Flag_ParkTransformation && Flag_SrcType_Stator==1)

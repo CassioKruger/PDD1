@@ -19,7 +19,7 @@ pslo = mm * 3*2/2/1.5; // slot opening
 psl  = mm * 2.2; // upper part slot
 pout = mm * 12; // outer radius
 pMB  = mm * 1 * 2/2; // MB
-p  = mm*12*0.05*1.3;    //rotor 
+p  = mm*12*0.05*1.3;    //rotor
 
 Include "pdd1_v5_stator.geo" ;
 Include "pdd1_v5_stator_mags.geo" ;
@@ -45,13 +45,14 @@ View[PostProcessing.NbViews-1].LineWidth = 2;           // espessura linha
 View[PostProcessing.NbViews-1].ColormapNumber = 2;      // color map - 2 default - 10 B&W
 
 General.Trackball = 0;
-General.RotationX = 0; 
-General.RotationY = 0; 
+General.RotationX = 0;
+General.RotationY = 0;
 General.RotationZ = 0;
-General.Color.Background = White; 
+General.Color.Background = White;
 General.Color.Foreground = Black;
 General.Color.Text = Black;
 General.Orthographic = 0;
-General.Axes = 0; 
+General.Axes = 0;
 General.SmallAxes = 0;
 
+//testando git no atom

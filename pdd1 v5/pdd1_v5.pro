@@ -6,7 +6,7 @@ Include "pdd1_v5_data.geo";
 
 DefineConstant
 [
-  Flag_AnalysisType = {1, Choices{0="Static",  1="Time domain", 2="Freq Domain"}, 
+  Flag_AnalysisType = {1, Choices{0="Static",  1="Time domain", 2="Freq Domain"},
                           Name "Input/19Type of analysis", Highlight "Blue",
                           Help Str["- Use 'Static' to compute static fields created in the machine",
                           "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
@@ -26,7 +26,7 @@ Flag_Cir = !Flag_SrcType_Stator ;
 Flag_ImposedCurrentDensity = Flag_SrcType_Stator ;
 
 Group{
-  
+
   Stator_Airgap = Region[STATOR_AIRGAP] ;
 
   Stator_Bnd_MB = Region[STATOR_BND_MOVING_BAND];
@@ -34,7 +34,7 @@ Group{
   Stator_Bnd_A1 = Region[STATOR_BND_A1] ;           //esquerda
 
   If(Flag_OpenStator)     //slot aberto do estator
-    Stator_Fe     = Region[STATOR_FE] ;         
+    Stator_Fe     = Region[STATOR_FE] ;
     Stator_Air    = Region[{STATOR_AIR,STATOR_SLOTOPENING}] ;
   EndIf
   If(!Flag_OpenStator)    //slot fechado do estator
@@ -68,7 +68,7 @@ Group{
   Rotor_Fe     = Region[ROTOR_FE] ;
   Rotor_Al     = Region[{}];
   Rotor_Cu     = Region[{}];
-  
+
   Rotor_Airgap = Region[ROTOR_AIRGAP] ;
 
   Rotor_Bnd_MB = Region[ROTOR_BND_MOVING_BAND] ;
@@ -160,7 +160,7 @@ Function {
 
   // For a radial remanent b
   For k In {1:nbMagnets}
-    br[ Rotor_Magnet~{k} ] = 0;//(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Rotor_Magnet~{k} ] = (-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
   For k In {1:nbMagnetsStator}
@@ -173,30 +173,30 @@ Function {
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface
   Torque_mec[] = 1000;
-  
+
   //--------------------------------------------------
   FillFactor_Winding = 0.5 ; // percentage of Cu in the surface coil side, smaller than 1
   Factor_R_3DEffects = 1.5 ; // bigger than Adding 50% of resistance
 
   DefineConstant
-  [ 
-    rpm = { rpm_nominal, Name "Input/7speed in rpm", Highlight "AliceBlue", Visible (Flag_AnalysisType==1)} 
+  [
+    rpm = { rpm_nominal, Name "Input/7speed in rpm", Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
   ]; // speed in rpm
 
   wr = rpm/60*2*Pi ; // speed in rad_mec/s
 
   // supply at fixed position
   DefineConstant
-  [ 
-    Freq = { wr*NbrPolePairs/(2*Pi), ReadOnly 1, Name "Output/1Freq", Highlight "LightYellow" } 
+  [
+    Freq = { wr*NbrPolePairs/(2*Pi), ReadOnly 1, Name "Output/1Freq", Highlight "LightYellow" }
   ];
 
   Omega = 2*Pi*Freq ;
   T = 1/Freq ;
 
   DefineConstant
-  [ 
-    thetaMax_deg = { 30, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }  
+  [
+    thetaMax_deg = { 30, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }
   ];
 
   theta0   = InitialRotorAngle + 0. ;
@@ -211,7 +211,25 @@ Function {
                         Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
   ];
 
-  delta_theta[] = delta_theta_deg * deg2rad ;
+  //relação de engrenagem de um pdd
+  // pH*wH + pL*wL = nP*wP
+  // wH is the speed of the inner rotor
+  // wL is the speed of the outer rotor
+  // wP is the speed of the modulators
+  // When one of the three parts of the gear is stationary, there will be a constant relation or gear ratio
+  //  between the speeds of other two parts.
+
+  //considering that the outer rotor is stationary, the gear ratio becomes:
+  // -> pH*wH = nP*wP
+  // -> Gr = pH/nP = wP/wH
+  // -> gear ratio = nbr of poles at rotor 1 / nbr of modulators
+
+  // in this case, the nbr of modulators is equal to the nbr of poles at the outer rotor, so:
+
+  gear_ratio = NbrPolesInModel/NbrSectStatorMag;
+
+  delta_theta[] = delta_theta_deg * deg2rad ;   //angulo de giro do rotor 1
+  delta_theta2[] = delta_theta[] * gear_ratio ; //angulo de giro do rotor 2
 
   time0 = 0 ; // at initial rotor position
   delta_time = delta_theta_deg * deg2rad/wr;

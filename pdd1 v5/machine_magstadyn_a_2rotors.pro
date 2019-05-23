@@ -114,7 +114,7 @@ DefineConstant[
   Flag_SrcType_StatorB = Flag_SrcType_Stator,
   Flag_SrcType_StatorC = Flag_SrcType_Stator,
   // Mechanical equation
-  Inertia = 0,
+  Inertia = 1,
   Flag_ImposedSpeed = 1,
   // Simulation parameters
   Flag_SaveAllSteps = {0, Name "Input/00Save all time steps", Choices {0,1}},
@@ -640,20 +640,20 @@ Formulation {
       { Name P2 ; Type Global ; NameOfSpace Position2 [P2] ; } // position   MB2
     }
     Equation {
-      GlobalTerm { DtDof [ Inertia * Dof{V} , {V} ] ; In DomainKin ; }
+      GlobalTerm { DtDof [ /*Inertia **/ Dof{V} , {V} ] ; In DomainKin ; }
       //GlobalTerm { [ Friction[] * Dof{V} , {V} ] ; In DomainKin ; }
-      GlobalTerm { [        Torque_mec[] , {V} ] ; In DomainKin ; }
-      GlobalTerm { [       -Torque_mag[] , {V} ] ; In DomainKin ; }
+      //GlobalTerm { [        Torque_mec[] , {V} ] ; In DomainKin ; }
+      //GlobalTerm { [       -Torque_mag[] , {V} ] ; In DomainKin ; }
 
       GlobalTerm { DtDof [ Dof{P} , {P} ] ; In DomainKin ; }
       GlobalTerm {       [-Dof{V} , {P} ] ; In DomainKin ; }
 
       //---------------------------------------------------------------//
 
-      GlobalTerm { DtDof [ Inertia*0.7 * Dof{V2} , {V2} ] ; In DomainKin2 ; }
+      GlobalTerm { DtDof [ /*Inertia*0.7 **/ Dof{V2} , {V2} ] ; In DomainKin2 ; }
       //GlobalTerm { [ Friction[] * Dof{V2} , {V2} ] ; In DomainKin2 ; }
       //GlobalTerm { [        Torque_mec[] , {V2} ] ; In DomainKin2 ; }
-      GlobalTerm { [       -Torque_mag[] , {V2} ] ; In DomainKin2 ; }
+      //GlobalTerm { [       -Torque_mag[] , {V2} ] ; In DomainKin2 ; }
 
       GlobalTerm { DtDof [ Dof{P2} , {P2} ] ; In DomainKin2 ; }
       GlobalTerm {       [-Dof{V2} , {P2} ] ; In DomainKin2 ; }
@@ -787,12 +787,6 @@ Resolution {
             Evaluate[ $Tstator = 0 ];
             Evaluate[ $Trotor = 0 ];
             Evaluate[ $Trotor2 = 0 ];
-
-           /* Evaluate[ $Vrotor1 = 0 ];
-            Evaluate[ $Protor1 = 0 ];
-
-            Evaluate[ $Vrotor2 = 0 ];
-            Evaluate[ $Protor2 = 0 ];*/
           }
           If(Flag_ImposedSpeed)
             Generate[M]; Solve[M]; SaveSolution[M];

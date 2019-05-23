@@ -6,33 +6,19 @@ Include "pdd1_v5_data.geo";
 
 DefineConstant
 [
-<<<<<<< HEAD
   Flag_AnalysisType = {1,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/19Type of analysis", Highlight "Blue",
     Help Str["- Use 'Static' to compute static fields created in the machine",
       "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
-=======
-  Flag_AnalysisType = {1, Choices{0="Static",  1="Time domain", 2="Freq Domain"},
-                          Name "Input/19Type of analysis", Highlight "Blue",
-                          Help Str["- Use 'Static' to compute static fields created in the machine",
-                          "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
->>>>>>> a88de471e00663d466d71e345f2e85f3f6deeb7b
 
   Flag_SrcType_Stator = { 0, Choices{0="None",1="Current"},
                              Name "Input/41Source type in stator", Highlight "Blue"},
 
   Flag_NL = { 1, Choices{0,1}, Name "Input/60Nonlinear BH-curve"},
 
-<<<<<<< HEAD
   Flag_NL_law_Type = { 1, Choices{
       0="Analytical", 1="Interpolated",
       2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
     Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
-=======
-  Flag_NL_law_Type = { 0, Choices{
-                       0="Analytical", 1="Interpolated",
-                       2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
-                       Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
->>>>>>> a88de471e00663d466d71e345f2e85f3f6deeb7b
 ];
 
 Flag_Cir = !Flag_SrcType_Stator ;

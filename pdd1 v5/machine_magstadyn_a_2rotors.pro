@@ -643,11 +643,7 @@ Formulation {
       GlobalTerm { DtDof [ /*Inertia **/ Dof{V} , {V} ] ; In DomainKin ; }
       //GlobalTerm { [ Friction[] * Dof{V} , {V} ] ; In DomainKin ; }
       //GlobalTerm { [        Torque_mec[] , {V} ] ; In DomainKin ; }
-<<<<<<< HEAD
       //GlobalTerm { [       -Torque_mag[] , {V} ] ; In DomainKin ; }
-=======
-      GlobalTerm { [       -Torque_mag[] , {V} ] ; In DomainKin ; }
->>>>>>> a88de471e00663d466d71e345f2e85f3f6deeb7b
 
       GlobalTerm { DtDof [ Dof{P} , {P} ] ; In DomainKin ; }
       GlobalTerm {       [-Dof{V} , {P} ] ; In DomainKin ; }

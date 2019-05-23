@@ -56,7 +56,7 @@ For i In {0:N_ss-1}
 	 Point(dP+4) = {0, h_r1, 0, psl};										//centro do circulo inferior	 
 	 Point(dP+5) = {b_2,  h_r1, 0, psl};									//ponto mais a direita do circulo inferior
 	 Point(dP+6) = {0, h_r2, 0, psl};										//centro do circulo superior		 
-	 Point(dP+7) = {b_3, h_r2, 0, psl};									//ponto mais a direita do circulo superior	 
+	 Point(dP+7) = {b_3, h_r2, 0, psl};										//ponto mais a direita do circulo superior	 
 	 Point(dP+8) = {0, h_r2+r2, 0, pout};									// ponto mais acima do circulo superior	 
 	 Point(dP+9) = {R_sout*Sin(Pi/Qs), R_sout*Cos(Pi/Qs), 0, pout};			// outer stator sector	 
 	 Point(dP+10) = {0, R_sout, 0, pout};									// outer stator center	 

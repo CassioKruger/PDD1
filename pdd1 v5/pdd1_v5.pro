@@ -6,26 +6,40 @@ Include "pdd1_v5_data.geo";
 
 DefineConstant
 [
+<<<<<<< HEAD
   Flag_AnalysisType = {1,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/19Type of analysis", Highlight "Blue",
     Help Str["- Use 'Static' to compute static fields created in the machine",
       "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
+=======
+  Flag_AnalysisType = {1, Choices{0="Static",  1="Time domain", 2="Freq Domain"},
+                          Name "Input/19Type of analysis", Highlight "Blue",
+                          Help Str["- Use 'Static' to compute static fields created in the machine",
+                          "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
+>>>>>>> a88de471e00663d466d71e345f2e85f3f6deeb7b
 
   Flag_SrcType_Stator = { 0, Choices{0="None",1="Current"},
-    Name "Input/41Source type in stator", Highlight "Blue"},
+                             Name "Input/41Source type in stator", Highlight "Blue"},
 
   Flag_NL = { 1, Choices{0,1}, Name "Input/60Nonlinear BH-curve"},
 
+<<<<<<< HEAD
   Flag_NL_law_Type = { 1, Choices{
       0="Analytical", 1="Interpolated",
       2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
     Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
+=======
+  Flag_NL_law_Type = { 0, Choices{
+                       0="Analytical", 1="Interpolated",
+                       2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
+                       Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
+>>>>>>> a88de471e00663d466d71e345f2e85f3f6deeb7b
 ];
 
 Flag_Cir = !Flag_SrcType_Stator ;
 Flag_ImposedCurrentDensity = Flag_SrcType_Stator ;
 
 Group{
-  
+
   Stator_Airgap = Region[STATOR_AIRGAP] ;
 
   Stator_Bnd_MB = Region[STATOR_BND_MOVING_BAND];
@@ -33,7 +47,7 @@ Group{
   Stator_Bnd_A1 = Region[STATOR_BND_A1] ;           //esquerda
 
   If(Flag_OpenStator)     //slot aberto do estator
-    Stator_Fe     = Region[STATOR_FE] ;         
+    Stator_Fe     = Region[STATOR_FE] ;
     Stator_Air    = Region[{STATOR_AIR,STATOR_SLOTOPENING}] ;
   EndIf
   If(!Flag_OpenStator)    //slot fechado do estator
@@ -67,7 +81,7 @@ Group{
   Rotor_Fe     = Region[ROTOR_FE] ;
   Rotor_Al     = Region[{}];
   Rotor_Cu     = Region[{}];
-  
+
   Rotor_Airgap = Region[ROTOR_AIRGAP] ;
 
   Rotor_Bnd_MB = Region[ROTOR_BND_MOVING_BAND] ;
@@ -159,52 +173,43 @@ Function {
 
   // For a radial remanent b
   For k In {1:nbMagnets}
-    br[ Rotor_Magnet~{k} ] =0; //(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Rotor_Magnet~{k} ] = (-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
   For k In {1:nbMagnetsStator}
-    br[ Stator_Magnet~{k} ] =0; //(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Stator_Magnet~{k} ] =(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
-
 
   //Data for modeling a stranded inductor
   NbWires[]  = 104 ; // Number of wires per slot
   // STATOR_IND_AM comprises all the slots in that phase, we need thus to divide by the number of slots
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface
-  //Torque_mec[] = 10;
+  Torque_mec[] = 1000;
+
   //--------------------------------------------------
-/*
-  Surface_PM[] = SurfaceArea[]{ROTOR_MAGNET};
-
-  DefineConstant[ SurfPM = {Surface_PM[ROTOR_MAGNET], ReadOnly 1,
-                          Path "Output/2", Highlight "LightYellow" } ];
-*/
-  //--------------------------------------------------
-
-
   FillFactor_Winding = 0.5 ; // percentage of Cu in the surface coil side, smaller than 1
   Factor_R_3DEffects = 1.5 ; // bigger than Adding 50% of resistance
 
   DefineConstant
-  [ 
-    rpm = { rpm_nominal, Name "Input/7speed in rpm", Highlight "AliceBlue", Visible (Flag_AnalysisType==1)} 
+  [
+    rpm = { rpm_nominal, Name "Input/7speed in rpm", Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
   ]; // speed in rpm
 
   wr = rpm/60*2*Pi ; // speed in rad_mec/s
 
   // supply at fixed position
   DefineConstant
-  [ 
-    Freq = { wr*NbrPolePairs/(2*Pi), ReadOnly 1, Name "Output/1Freq", Highlight "LightYellow" } 
+  [
+    Freq = { wr*NbrPolePairs/(2*Pi), ReadOnly 1, Name "Output/1Freq", Highlight "LightYellow" }
   ];
 
   Omega = 2*Pi*Freq ;
   T = 1/Freq ;
 
   DefineConstant
-  [ 
-    thetaMax_deg = { 10, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }  
+  [
+    thetaMax_deg = { 30, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }
   ];
 
   theta0   = InitialRotorAngle + 0. ;
@@ -213,13 +218,31 @@ Function {
   DefineConstant
   [
     NbTurns  = { (thetaMax-theta0)/(2*Pi), Name "Input/24Number of revolutions",
-      Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)},
+                  Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)},
 
-    delta_theta_deg = { 1., Name "Input/22Step [deg]",
-      Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
+    delta_theta_deg = { 1, Name "Input/22Step [deg]",
+                        Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
   ];
 
-  delta_theta[] = delta_theta_deg * deg2rad ;
+  //relação de engrenagem de um pdd
+  // pH*wH + pL*wL = nP*wP
+  // wH is the speed of the inner rotor
+  // wL is the speed of the outer rotor
+  // wP is the speed of the modulators
+  // When one of the three parts of the gear is stationary, there will be a constant relation or gear ratio
+  //  between the speeds of other two parts.
+
+  //considering that the outer rotor is stationary, the gear ratio becomes:
+  // -> pH*wH = nP*wP
+  // -> Gr = pH/nP = wP/wH
+  // -> gear ratio = nbr of poles at rotor 1 / nbr of modulators
+
+  // in this case, the nbr of modulators is equal to the nbr of poles at the outer rotor, so:
+
+  gear_ratio = NbrPolesInModel/NbrSectStatorMag;
+
+  delta_theta[] = delta_theta_deg * deg2rad ;   //angulo de giro do rotor 1
+  delta_theta2[] = delta_theta[] * gear_ratio ; //angulo de giro do rotor 2
 
   time0 = 0 ; // at initial rotor position
   delta_time = delta_theta_deg * deg2rad/wr;
@@ -228,7 +251,7 @@ Function {
   DefineConstant
   [
     NbSteps = { Ceil[(timemax-time0)/delta_time], Name "Input/23Number of steps",
-      Highlight "LightGrey", ReadOnly 10, Visible (Flag_AnalysisType==1)}
+                Highlight "LightGrey", ReadOnly 10, Visible (Flag_AnalysisType==1)}
   ];
 
   RotorPosition[] = InitialRotorAngle + $Time * wr ;
@@ -245,9 +268,9 @@ Function {
   DefineConstant
   [
     ID = { 0, Name "Input/50Id stator current",
-      Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)},
+          Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)},
     IQ = { Inominal, Name "Input/51Iq stator current",
-      Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)}
+          Highlight "AliceBlue", Visible (Flag_SrcType_Stator==1)}
   ] ;
 
   II = Inominal;

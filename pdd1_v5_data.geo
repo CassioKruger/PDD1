@@ -4,7 +4,7 @@
 
 u = 1e-3;           // unidade = mm
 mm = 1e-3;
-cm = 1e-2;          // unidade 
+cm = 1e-2;          // unidade
 deg2rad = Pi/180;   // graus para radianos
 
 //Point(0) = {0,0,0,1.0}; //origem/
@@ -21,7 +21,7 @@ DefineConstant[
 NbrStatorPolesInModel = NbrPolesInModel*9;
 If(NbrStatorPolesInModel>50)
   NbrStatorPolesInModel=50;
-EndIf 
+EndIf
 
 NbrPolesTot = 6;                                                // Numero total de polos na máquina
 NbrPolePairs = NbrPolesTot/2 ;
@@ -111,7 +111,7 @@ ROTOR2_BOTTOM_BND_MOVING_BAND = 12000;
 ROTOR2_BND_A0 = 13000;
 ROTOR2_BND_A1 = 14000;
 
-SURF_INT     = 15000 ;
+SURF_INT     = 99000 ;
 
 // Stator
 STATOR_FE     = 16000 ;
@@ -138,3 +138,5 @@ SURF_EXT = 26000 ; // outer boundary
 MOVING_BAND = 27000 ;
 
 NICEPOS = 28000 ;
+
+topMag_stator = 200000;

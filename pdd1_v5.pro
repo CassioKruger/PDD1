@@ -163,7 +163,7 @@ Function {
   EndFor
 
   For k In {1:nbMagnetsStator}
-    br[ Stator_Magnet~{k} ] =(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Stator_Magnet~{k} ] =0;//(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
   //Data for modeling a stranded inductor

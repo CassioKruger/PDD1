@@ -46,25 +46,25 @@ For i In {0:N_ss-1}
 	 For half In {0:1}
 
 	 //pontos de uma metade(direita) do slot (ranhura)
-	 //Points	 
+	 //Points
 	 dP=newp;
 	 Point(dP+0) = {0,0,0,1.0};
-	 
+
 	 Point(dP+1) = {b_1/2, R_sin*Sin((Pi/2)-aux2), 0, pslo};					//entrada direita do slot
 	 Point(dP+2) = {b_1/2, h_r1-Sin(aux1)*r1, 0, pslo};
-	 Point(dP+3) = {0, h_r1-Sin(aux1)*r1, 0, pslo};	 
-	 Point(dP+4) = {0, h_r1, 0, psl};										//centro do circulo inferior	 
+	 Point(dP+3) = {0, h_r1-Sin(aux1)*r1, 0, pslo};
+	 Point(dP+4) = {0, h_r1, 0, psl};										//centro do circulo inferior
 	 Point(dP+5) = {b_2,  h_r1, 0, psl};									//ponto mais a direita do circulo inferior
-	 Point(dP+6) = {0, h_r2, 0, psl};										//centro do circulo superior		 
-	 Point(dP+7) = {b_3, h_r2, 0, psl};										//ponto mais a direita do circulo superior	 
-	 Point(dP+8) = {0, h_r2+r2, 0, pout};									// ponto mais acima do circulo superior	 
-	 Point(dP+9) = {R_sout*Sin(Pi/Qs), R_sout*Cos(Pi/Qs), 0, pout};			// outer stator sector	 
-	 Point(dP+10) = {0, R_sout, 0, pout};									// outer stator center	 
-	 Point(dP+11) = {R_sin*Sin(Pi/Qs), R_sin*Cos(Pi/Qs), 0, pslo};			// inner stator sector	 	 
+	 Point(dP+6) = {0, h_r2, 0, psl};										//centro do circulo superior
+	 Point(dP+7) = {b_3, h_r2, 0, psl};										//ponto mais a direita do circulo superior
+	 Point(dP+8) = {0, h_r2+r2, 0, pout};									// ponto mais acima do circulo superior
+	 Point(dP+9) = {R_sout*Sin(Pi/Qs), R_sout*Cos(Pi/Qs), 0, pout};			// outer stator sector
+	 Point(dP+10) = {0, R_sout, 0, pout};									// outer stator center
+	 Point(dP+11) = {R_sin*Sin(Pi/Qs), R_sin*Cos(Pi/Qs), 0, pslo};			// inner stator sector
 	 Point(dP+12) = {0, R_sin, 0, pslo};									//inner stator center
-	 
+
 	 //enrolamento mais interno
-	 Point(dP+13) = {0, 165.7920*u, 0, 1.5*psl}; 			
+	 Point(dP+13) = {0, 165.7920*u, 0, 1.5*psl};
 	 Point(dP+14) = {largura_bob, 165.7920*u, 0, psl};
 	 Point(dP+15) = {largura_bob, (165.7920*u)+altura_bob, 0, psl};
 	 Point(dP+16) = {0, (165.7920*u)+altura_bob, 0, psl};
@@ -88,22 +88,22 @@ For i In {0:N_ss-1}
 
 	 //Lines
 	dR=newl-1;
-	 
-	 Line(dR+1) = {dP+1,dP+2};							//linha ventical da entrada do slot	 
-	 Line(dR+2) = {dP+2,dP+3};							//linha horizontal da entrada do slot	 
-	 Circle(dR+3) = {dP+2,dP+4,dP+5};					//primeiro arco, da antrada até o ponto mais a direita do circ inferor	 
-	 Line(dR+4) = {dP+5,dP+7};							//linha lateral do slot		 
-	 Circle(dR+5) = {dP+7,dP+6,dP+8};					//arco direito do circ superior	 
-	 Circle(dR+6) = {dP+11,dP+0,dP+1};					//slot opening arc - parte inferior da seção	 
-	 Circle(dR+7) = {dP+1,dP+0,dP+12};					//arc inner teeth surface  - abertura da entrada do slot	 
-	 Circle(dR+8) = {dP+9,dP+0,dP+10};					//outer stator - borda externa do estator	 
-	 Line(dR+9) = {dP+12,dP+3};						//vertical central slot opening - centro da entrada do slot	 
+
+	 Line(dR+1) = {dP+1,dP+2};							//linha ventical da entrada do slot
+	 Line(dR+2) = {dP+2,dP+3};							//linha horizontal da entrada do slot
+	 Circle(dR+3) = {dP+2,dP+4,dP+5};					//primeiro arco, da antrada até o ponto mais a direita do circ inferor
+	 Line(dR+4) = {dP+5,dP+7};							//linha lateral do slot
+	 Circle(dR+5) = {dP+7,dP+6,dP+8};					//arco direito do circ superior
+	 Circle(dR+6) = {dP+11,dP+0,dP+1};					//slot opening arc - parte inferior da seção
+	 Circle(dR+7) = {dP+1,dP+0,dP+12};					//arc inner teeth surface  - abertura da entrada do slot
+	 Circle(dR+8) = {dP+9,dP+0,dP+10};					//outer stator - borda externa do estator
+	 Line(dR+9) = {dP+12,dP+3};						//vertical central slot opening - centro da entrada do slot
 	 Line(dR+10) = {dP+3,dP+13}; 						// centro do slot (dividido em 3 linhas, pois fica entre as bobinas também)
-	 Line(dR+11) = {dP+16,dP+17}; 		
-	 Line(dR+12) = {dP+20,dP+8}; 			
-	 Line(dR+13) = {dP+8,dP+10}; 						 //centro do slot conectado com linha externa do estator	 
+	 Line(dR+11) = {dP+16,dP+17};
+	 Line(dR+12) = {dP+20,dP+8};
+	 Line(dR+13) = {dP+8,dP+10}; 						 //centro do slot conectado com linha externa do estator
 	 Line(dR+14) = {dP+11,dP+9};						 //sector border via steel - borda da seção (ferro)
-	 	
+
 	 //-------LINHAS PARA OS ENROLAMENTOS------------------//
 	 //enrolamento mais externo
 	 Line(dR+15) = {dP+13,dP+14};
@@ -125,9 +125,9 @@ For i In {0:N_ss-1}
 	 If (Flag_OpenStator != 0)
 	 	InnerStator_[] += {dR+1,dR+6,dR+3,dR+4,dR+5}; //slot aberto
 	 EndIf
-	 
-	 OuterStator_[] += dR+8;	 
-	 
+
+	 OuterStator_[] += dR+8;
+
 	 //Periodic boundary
 	 If (Qs != N_ss)
 		 //right boundary
@@ -143,7 +143,7 @@ For i In {0:N_ss-1}
 		//direction is important defining the Line Loops
 	 rev = (half ? -1 : 1);
 
-	//FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_	 
+	//FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_
 		 //fases A POSITIVA na parte EXTERNA
 		 For aux In {0:5:1}
 			 If(i == phase_a_plus_ext[aux])
@@ -180,7 +180,7 @@ For i In {0:N_ss-1}
 			 EndIf
 		 EndFor
 
-	//FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_	 
+	//FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_FASE_B_
 		//fases B POSITIVA na parte EXTERNA
 		For aux In {0:5:1}
 			 If(i == phase_b_plus_ext[aux])
@@ -217,7 +217,7 @@ For i In {0:N_ss-1}
 			 EndIf
 		 EndFor
 
-	//FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_	 
+	//FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_FASE_C_
 		 //fases C POSITIVA na parte EXTERNA
 		For aux In {0:5:1}
 			 If(i == phase_c_plus_ext[aux])
@@ -253,7 +253,7 @@ For i In {0:N_ss-1}
 				 PhaseC_Minus_[] += dH;
 			 EndIf
 		 EndFor
-	 
+
 		//surface of the stator iron
 	 Line Loop(newll) = {dR+13, -(dR+8), -(dR+14), dR+6, dR+1, dR+3, dR+4, dR+5};
 	 dH = news; Plane Surface(news) = -rev*{newll-1};
@@ -263,7 +263,7 @@ For i In {0:N_ss-1}
 	 Line Loop(newll) = {dR+1, dR+2, -(dR+9), -(dR+7)};
 	 dH = news; Plane Surface(news) = -rev*{newll-1};
 	 StatorSlotOpening_[] += dH;
-	
+
 		//air stator
 	 Line Loop(newll) = {dR+2, dR+10, dR+15, dR+16, dR+17, dR+11,
 	 					 dR+19, dR+20, dR+21, dR+12, -(dR+5), -(dR+4),
@@ -301,7 +301,7 @@ EndIf
 Physical Line(SURF_EXT) = {OuterStator_[]};
 
 
-//---------------- Superficies para as fases (A,B,C) dos enrolamentos 
+//---------------- Superficies para as fases (A,B,C) dos enrolamentos
 
 Physical Surface("stator phase A (-)", STATOR_IND_AM) = {PhaseA_Minus_[]};
 Physical Surface("stator phase C (+)", STATOR_IND_CP) = {PhaseC_Plus_[]};
@@ -334,6 +334,3 @@ If(!Flag_OpenStator)
   nicepos_stator[] = CombinedBoundary{Surface{StatorIron_[],StatorSlotOpening_[]};};
   nicepos_stator[] += CombinedBoundary{Surface{StatorAir_[]};};
 EndIf
-
-
-

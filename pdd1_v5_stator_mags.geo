@@ -25,7 +25,7 @@ For i In {0:N_ss_mag-1}
 	 Point(dP+2) = {R_s_mag_in*Sin(SMag_ang), R_s_mag_in*Cos(SMag_ang), 0, pMB};	//magnet sector (borda)
 	 Point(dP+3) = {R_sin*Sin(SMag_ang),R_sin*Cos(SMag_ang),0,pslo};						//magnet sector to inner stator
 	 Point(dP+4) = {0, R_sin, 0, pslo};											//magnet center to inner stator
-	 
+
 	 Point(dP+5) = {0, R_gs, 0, pMB};												//sliding center
 	 Point(dP+6) = {R_gs*Sin(SMag_ang), R_gs*Cos(SMag_ang), 0, pMB}; 				//sliding sector
 
@@ -53,7 +53,7 @@ For i In {0:N_ss_mag-1}
 	 Circle(dR+7) = {dP+5,dP+0,dP+6};													//bottom sliding
 
 	 StatorSliding_[] += {dR+7};
-	 
+
 	 	//if mirrorred, then the lines order is reversed
 		//direction is important defining the Line Loops
 	 rev = (half ? -1 : 1);
@@ -73,7 +73,7 @@ For i In {0:N_ss_mag-1}
 	 			//surface of magnetics (SUL)
 		 Line Loop(newll) = {dR+3,dR+2,-(dR+4),-(dR+1)};
 		 dH = news; Plane Surface(news) = -rev*{newll-1};
-		 StatorMagneticsSouth_[] += dH;		 
+		 StatorMagneticsSouth_[] += dH;
 	 EndIf
 
 	 //surface of magnetics

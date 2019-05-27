@@ -41,12 +41,16 @@ Group {
     Surf_bn0, Surf_Inf, Point_ref,
     PhaseA, PhaseB, PhaseC, PhaseA_pos, PhaseB_pos, PhaseC_pos,
     Resistance_Cir, Inductance_Cir, Capacitance_Cir, DomainZt_Cir, DomainSource_Cir,
-    Dummy
+    Dummy,
+
+    //testes
+    Test_MB_mags, Test_MB_stator, Test_MB_magsaux, Test_MB_statoraux
   ];
   // Exception: the group 'MovingBand_PhysicalNb' needs contain exactly one region
   // to pass a test done by the parser. It is declared with a dummy region "0".
   MovingBand_PhysicalNb = Region[0] ;
   MovingBand_PhysicalNb2 = Region[1] ;
+  MovingBand_PhysicalNb3 = Region[2] ;
 }
 
 //-------------------------------------------------------------------------------------
@@ -193,10 +197,15 @@ Group {
 
   MB  = MovingBand2D[ MovingBand_PhysicalNb, Stator_Bnd_MB, Rotor2_Top_Bnd_MB, SymmetryFactor] ;      //stator and top rotor2
   MB2  = MovingBand2D[ MovingBand_PhysicalNb2, Rotor_Bnd_MB, Rotor2_Bottom_Bnd_MB, SymmetryFactor] ;   //rotor 1 and bottom rotor2
-  Air = Region[{ Rotor_Air, Rotor_Airgap, Rotor2_Air, Rotor2_Airgap, Stator_Air, Stator_Airgap, MB, MB2} ] ;
+
+  //MB3  = MovingBand2D[ MovingBand_PhysicalNb3, Test_MB_mags, Test_MB_stator, SymmetryFactor] ;
+
+  Air = Region[{ Rotor_Air, Rotor_Airgap, Rotor2_Air, Rotor2_Airgap, Stator_Air, Stator_Airgap, MB, MB2/*, MB3*/} ] ;
+
+
 
   DomainCC = Region[{ Air, Inds, StatorCC, RotorCC, Rotor2CC }];  //non conducting
-  DomainC  = Region[{ StatorC, RotorC, RotorC }];                 //massive conductor
+  DomainC  = Region[{ StatorC, RotorC, RotorC}];                 //massive conductor
   Domain  = Region[{ DomainCC, DomainC }] ;
 
   DomainNL = Region[{}];
@@ -573,6 +582,16 @@ Formulation {
       Galerkin {  [  0*Dof{d a} , {d a} ]  ;
         In Rotor2_Bottom_Bnd_MBaux; Jacobian Sur; Integration I1; }
 
+/*
+      //MB3
+      Galerkin {  [  0*Dof{d a} , {d a} ]  ;
+        In Test_MB_magsaux; Jacobian Sur; Integration I1; }
+      Galerkin {  [  0*Dof{d a} , {d a} ]  ;
+        In Test_MB_statoraux; Jacobian Sur; Integration I1; }
+      //
+*/
+
+
       Galerkin { [ -nu[] * br[] , {d a} ] ;
         In DomainM ; Jacobian Vol ; Integration I1 ; }
 
@@ -717,6 +736,8 @@ Resolution {
         MeshMovingBand2D[MB] ;
         InitMovingBand2D[MB2] ;
         MeshMovingBand2D[MB2] ;
+        //InitMovingBand2D[MB3] ;
+        //MeshMovingBand2D[MB3] ;
         InitSolution[A] ;
 
         If(Flag_ParkTransformation && Flag_SrcType_Stator==1)
@@ -749,6 +770,8 @@ Resolution {
         MeshMovingBand2D[MB];
         InitMovingBand2D[MB2];
         MeshMovingBand2D[MB2];
+      //  InitMovingBand2D[MB3];
+      //  MeshMovingBand2D[MB3];
 
         InitSolution[A];
         SaveSolution[A];
@@ -805,6 +828,7 @@ Resolution {
 
           MeshMovingBand2D[MB] ;
           MeshMovingBand2D[MB2] ;
+          //MeshMovingBand2D[MB3] ;
         }
       EndIf // End Flag_AnalysisType==1 (Time domain)
     }

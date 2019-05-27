@@ -23,8 +23,8 @@ For i In {0:N_ss_mag-1}
 
 	 Point(dP+1) = {0, R_s_mag_in, 0, pMB};												//magnet center
 	 Point(dP+2) = {R_s_mag_in*Sin(SMag_ang), R_s_mag_in*Cos(SMag_ang), 0, pMB};	//magnet sector (borda)
-	 Point(dP+3) = {R_sin*Sin(SMag_ang),R_sin*Cos(SMag_ang),0,pslo};						//magnet sector to inner stator
-	 Point(dP+4) = {0, R_sin, 0, pslo};											//magnet center to inner stator
+	 Point(dP+3) = {(R_sin-0.00005)*Sin(SMag_ang),(R_sin-0.00005)*Cos(SMag_ang),0,pslo};						//magnet sector to inner stator
+	 Point(dP+4) = {0, (R_sin-0.00005), 0, pslo};											//magnet center to inner stator
 
 	 Point(dP+5) = {0, R_gs, 0, pMB};												//sliding center
 	 Point(dP+6) = {R_gs*Sin(SMag_ang), R_gs*Cos(SMag_ang), 0, pMB}; 				//sliding sector
@@ -51,6 +51,8 @@ For i In {0:N_ss_mag-1}
 	 Line(dR+5) = {dP+5,dP+1};															//sliding center
 	 Line(dR+6) = {dP+6,dP+2};															//sliding sector (borda)
 	 Circle(dR+7) = {dP+5,dP+0,dP+6};													//bottom sliding
+
+	// Transfinite Line {dR+4} = 30 Using Progression 1;
 
 	 StatorSliding_[] += {dR+7};
 
@@ -81,8 +83,12 @@ For i In {0:N_ss_mag-1}
 	 dH = news; Plane Surface(news) = -rev*{newll-1};
 	 StatorMagnetics_[] += dH;
 
+	 topMags_[] += -(dR+4);
+
 	 EndFor
 EndFor
+
+
 
 // Completing moving band
 NN = #StatorSliding_[] ;
@@ -101,6 +107,7 @@ If (N_ss_mag>1)
 EndIf
 
 auxiliar = 0;
+
 
 NN = (Flag_Symmetry)?NbrStatorPolesInModel:NbrStatorPolesTot;
 Printf("stator magnet %g",NN);

@@ -23,8 +23,19 @@ p  = mm*12*0.05*1.3;    //rotor
 
 Include "pdd1_v5_stator.geo" ;
 Include "pdd1_v5_stator_mags.geo" ;
+
+
+save1 = newll;
+Line Loop(save1) = {innerTest_[]};
+save2 = newll;
+Line Loop(save2) = {topMags_[]};
+
+dH = news; Plane Surface(news) = -rev*{save1,save2};
+ferro2[] +=dH;
+
 Include "pdd1_v5_rotor1.geo" ;
 Include "pdd1_v5_rotor2.geo" ;
+
 
 Mesh.CharacteristicLengthFactor = 1;
 //Mesh 2;

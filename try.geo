@@ -4,6 +4,12 @@
 
 Geometry.AutoCoherence = 0;
 
+//Stator airgap
+R_gs = R_s_mag_in-AG;
+
+//Stator magnets
+SMag_ang = (7.2/2)*deg2rad;
+
 //dimensões das bobinas (vertical, para o lado esquerdo)
 largura_bob = (12.6415*u)/2; 	//[m]
 altura_bob 	= 8.2980*u;  	//[m]
@@ -38,7 +44,6 @@ phase_c_plus_ext[] = {8,9,20,21,33,34};			//6
 phase_c_plus_int[] = {9,10,21,22,23,35,36};		//7
 phase_c_minus_ext[] = {1,2,14,15,26,27,28};		//7
 phase_c_minus_int[] = {3,4,15,16,28,29};		//6
-
 
 //build stator slots
 For i In {0:N_ss-1}
@@ -75,14 +80,24 @@ For i In {0:N_ss-1}
 	 Point(dP+19) = {largura_bob, (176.1630*u)+altura_bob, 0, psl};
 	 Point(dP+20) = {0, (176.1630*u)+altura_bob, 0, psl};
 
-	 // rotate the built points to the i-th slot position
-	 For t In {dP+0:dP+20}
-	 	Rotate {{0,0,1},{0,0,0}, 2*Pi*i/Qs+2*Pi/Qs/2} {Point{t};}
+   //mags
+   Point(dP+21) = {0, R_s_mag_in, 0, pMB};												//magnet center
+	 Point(dP+22) = {R_s_mag_in*Sin(Pi/Qs), R_s_mag_in*Cos(Pi/Qs), 0, pMB};	//magnet sector (borda)
+	 //Point(dP+23) = {(R_sin)*Sin(Pi/Qs),(R_sin)*Cos(Pi/Qs),0,pslo};						//magnet sector to inner stator
+	 //Point(dP+24) = {0, (R_sin), 0, pslo};										           	//magnet center to inner stator
+
+	 Point(dP+25) = {0, R_gs, 0, pMB};												//sliding center
+	 Point(dP+26) = {R_gs*Sin(Pi/Qs), R_gs*Cos(Pi/Qs), 0, pMB}; 				//sliding sector
+   //mags
+
+   // rotate the built points to the i-th slot position
+	 For t In {dP+0:dP+26}
+	 	Rotate {{0,0,1},{0,0,0}, 2*Pi*i/Qs_mag+2*Pi/Qs_mag/2} {Point{t};}
 	 EndFor
 
 	 If (half==1) //second half
-		 For t In {dP+0:dP+20}
-		 	Symmetry {Cos(2*Pi*i/Qs+2*Pi/Qs/2),Sin(2*Pi*i/Qs+2*Pi/Qs/2),0,0} {Point{t};}
+		 For t In {dP+0:dP+26}
+		 	Symmetry {Cos(2*Pi*i/Qs_mag+2*Pi/Qs_mag/2),Sin(2*Pi*i/Qs_mag+2*Pi/Qs_mag/2),0,0} {Point{t};}
 		 EndFor
 	 EndIf
 
@@ -116,6 +131,16 @@ For i In {0:N_ss-1}
 	 Line(dR+20) = {dP+18,dP+19};
 	 Line(dR+21) = {dP+19,dP+20};
 	 Line(dR+22) = {dP+20,dP+17};
+
+   //mags
+   Line(dR+23) = {dP+25,dP+21};
+   Line(dR+24) = {dP+21,dP+12};
+   Line(dR+25) = {dP+26,dP+22};
+   Line(dR+26) = {dP+22,dP+11};
+
+   Circle(dR+27) = {dP+25,dP+0,dP+26};
+   Circle(dR+28) = {dP+21,dP+0,dP+22};
+   //mags
 /*
 	 Transfinite Line {dR+6} = 30 Using Progression 1;
 	 Transfinite Line {dR+7} = 6 Using Progression 1;
@@ -131,23 +156,37 @@ For i In {0:N_ss-1}
 
 	 OuterStator_[] += dR+8;
 
-	 innerTest_[] += {dR+7,dR+6};
+   StatorSliding_[] += {dR+27};
 
 
-	 //Periodic boundary
-	 If (Qs != N_ss)
-		 //right boundary
-		 If (i==0 && half==0)
-		 	StatorPeriod_Right_[] = {dR+14};
-		 EndIf
-		 //left boundary
-		 If (i==(N_ss-1) && half==1)
-		 	StatorPeriod_Left_[] = {dR+14};
-		 EndIf
-	 EndIf
 	 	//if mirrorred, then the lines order is reversed
 		//direction is important defining the Line Loops
 	 rev = (half ? -1 : 1);
+
+  //mags
+  Line Loop(newll) = {dR+27,dR+28,dR+25,dR+23};
+  dH = news; Plane Surface(news) = rev*{newll-1};
+  StatorAirgapLayer_[] += dH;
+
+  If (i%2==0)
+     //surface of magnetics (NORTE)
+    Line Loop(newll) = {dR+28, dR+26, dR+6, dR+7, -(dR+24)};
+    dH = news; Plane Surface(news) = -rev*{newll-1};
+    StatorMagneticsNorth_[] += dH;
+  EndIf
+
+  If (i%2!=0)
+       //surface of magnetics (SUL)
+    Line Loop(newll) = {dR+28, dR+26, dR+6, dR+7, -(dR+24)};
+    dH = news; Plane Surface(news) = -rev*{newll-1};
+    StatorMagneticsSouth_[] += dH;
+  EndIf
+
+  //surface of magnetics
+  Line Loop(newll) = {dR+28, dR+26, dR+6, dR+7, -(dR+24)};
+  dH = news; Plane Surface(news) = -rev*{newll-1};
+  StatorMagnetics_[] += dH;
+  //mags
 
 	//FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_
 		 //fases A POSITIVA na parte EXTERNA
@@ -278,14 +317,55 @@ For i In {0:N_ss-1}
 	 StatorAir_[] += dH;
 
 
-
-
 	 EndFor
 EndFor
 
+Line Loop(newll) = {innerTest_[]};
+dH = news; Plane Surface(news) = {newll-1};
+aux = dH;
 
 
 //---------------------------------stator-----------------------------------------//
+
+//mags
+// Completing moving band
+NN = #StatorSliding_[] ;
+k1 = (NbrStatorPolesInModel==1)?NbrStatorPolesInModel:NbrStatorPolesInModel+1;
+For k In {k1:NbrStatorPolesTot-1}
+  StatorSliding_[] += Rotate {{0, 0, 1}, {0, 0, 0}, k*NbrSectStatorMag*2*(Pi/NbrSectStatorMagTot)} { Duplicata{ Line{StatorSliding_[{0:NN-1}]};} };
+EndFor
+
+//--------------------------------SURFACES--------------------------------------------------------------//
+
+//Physical Surface("StatorMagNORTE") = {StatorMagneticsNorth_[]};
+Color Orchid {Surface{StatorMagneticsNorth_[]};}
+If (N_ss_mag>1)
+	//Physical Surface("StatorMagSUL") = {StatorMagneticsSouth_[]};
+	Color Blue {Surface{StatorMagneticsSouth_[]};}
+EndIf
+
+auxiliar = 0;
+
+NN = (Flag_Symmetry)?NbrStatorPolesInModel:NbrStatorPolesTot;
+Printf("stator magnet %g",NN);
+For k In {0:(NN-1)*2:2}
+  Physical Surface(Sprintf("stator magnet %g",auxiliar),STATOR_MAGNET+auxiliar) = {StatorMagnetics_[k],StatorMagnetics_[k+1]}; // Magnets
+  auxiliar++;
+EndFor
+
+Physical Line(STATOR_BND_MOVING_BAND) = {StatorSliding_[]};
+
+Physical Line(TOP_MAGNETS) = {topMagnets_[]};
+
+Physical Surface("StatorAirgap", STATOR_AIRGAP) = {StatorAirgapLayer_[]};
+Color SkyBlue {Surface{StatorAirgapLayer_[]};}
+
+Coherence;
+
+nicepos_stator_mag[] = CombinedBoundary{Surface{StatorMagneticsSouth_[]};};
+nicepos_stator_mag[] += CombinedBoundary{Surface{StatorMagneticsNorth_[]};};
+nicepos_stator_mag[] += CombinedBoundary{Surface{StatorAirgapLayer_[]};};
+//mags
 Physical Surface("StatorSlotOpening", STATOR_SLOTOPENING) = {StatorSlotOpening_[]};
 
 Color SteelBlue {Surface{StatorIron_[]};}
@@ -309,6 +389,9 @@ If (Qs != N_ss)
 EndIf
 
 Physical Line(SURF_EXT) = {OuterStator_[]};
+
+Physical Line(INNER_STATOR) = {innerTest_[]};
+
 
 //---------------- Superficies para as fases (A,B,C) dos enrolamentos
 

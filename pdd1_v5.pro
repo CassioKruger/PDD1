@@ -15,7 +15,7 @@ DefineConstant
 
   Flag_NL = { 1, Choices{0,1}, Name "Input/60Nonlinear BH-curve"},
 
-  Flag_NL_law_Type = { 1, Choices{
+  Flag_NL_law_Type = { 0, Choices{
       0="Analytical", 1="Interpolated",
       2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
     Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
@@ -149,6 +149,26 @@ Group{
     Rotor_Bnd_MB += Region[ Rotor_Bnd_MB~{k} ];
   EndFor
   Rotor_Bnd_MBaux = Region[ {Rotor_Bnd_MB, -Rotor_Bnd_MB~{1}}];
+
+/*
+  // testando solução
+  Test_MB_mags = Region[TOP_MAGNETS];
+  Test_MB_stator = Region[INNER_STATOR];
+  //---------
+
+  For k In {1:SymmetryFactor}
+    Test_MB_mags~{k} = Region[ (TOP_MAGNETS+k-1) ];
+    Test_MB_mags += Region[ Test_MB_mags~{k} ];
+  EndFor
+  Test_MB_magsaux = Region[ {Test_MB_mags, -Test_MB_mags~{1}}];
+
+  For k In {1:SymmetryFactor}
+    Test_MB_stator~{k} = Region[ (INNER_STATOR+k-1) ];
+    Test_MB_stator += Region[ Test_MB_stator~{k} ];
+  EndFor
+  Test_MB_statoraux = Region[ {Test_MB_stator, -Test_MB_stator~{1}}];
+
+*/
 }
 
 ////-----------------------------------------------------------------------------------------------------------------////

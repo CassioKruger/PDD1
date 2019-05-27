@@ -93,9 +93,17 @@ For i In {0:N_ss-1}
 	 Line(dR+2) = {dP+2,dP+3};							//linha horizontal da entrada do slot
 	 Circle(dR+3) = {dP+2,dP+4,dP+5};					//primeiro arco, da antrada até o ponto mais a direita do circ inferor
 	 Line(dR+4) = {dP+5,dP+7};							//linha lateral do slot
+
+	 Transfinite Line {dR+2} = 3 Using Progression 1;
+	 Transfinite Line {dR+3} = 10 Using Progression 1;
+
 	 Circle(dR+5) = {dP+7,dP+6,dP+8};					//arco direito do circ superior
 	 Circle(dR+6) = {dP+11,dP+0,dP+1};					//slot opening arc - parte inferior da seção
 	 Circle(dR+7) = {dP+1,dP+0,dP+12};					//arc inner teeth surface  - abertura da entrada do slot
+
+	 Transfinite Line {dR+6} = 15 Using Progression 1;
+	 Transfinite Line {dR+7} = 3 Using Progression 1;
+
 	 Circle(dR+8) = {dP+9,dP+0,dP+10};					//outer stator - borda externa do estator
 	 Line(dR+9) = {dP+12,dP+3};						//vertical central slot opening - centro da entrada do slot
 	 Line(dR+10) = {dP+3,dP+13}; 						// centro do slot (dividido em 3 linhas, pois fica entre as bobinas também)
@@ -131,9 +139,6 @@ For i In {0:N_ss-1}
 
 	 OuterStator_[] += dR+8;
 
-	 innerTest_[] += {dR+7,dR+6};
-
-
 	 //Periodic boundary
 	 If (Qs != N_ss)
 		 //right boundary
@@ -148,6 +153,8 @@ For i In {0:N_ss-1}
 	 	//if mirrorred, then the lines order is reversed
 		//direction is important defining the Line Loops
 	 rev = (half ? -1 : 1);
+
+	 innerTest_[] += -rev*{(dR+7),(dR+6)};
 
 	//FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_FASE_A_
 		 //fases A POSITIVA na parte EXTERNA
@@ -288,20 +295,7 @@ EndFor
 //---------------------------------stator-----------------------------------------//
 Physical Surface("StatorSlotOpening", STATOR_SLOTOPENING) = {StatorSlotOpening_[]};
 
-Color SteelBlue {Surface{StatorIron_[]};}
-Color SkyBlue {Surface{StatorAir_[]};}
 
-If(Flag_OpenStator)
-  Color SkyBlue {Surface{StatorSlotOpening_[]};}
-  Physical Surface(STATOR_FE) = {StatorIron_[]};
-  Physical Surface(STATOR_AIR) = {StatorAir_[], StatorSlotOpening_[]};
-EndIf
-
-If(!Flag_OpenStator)
-  Color SteelBlue {Surface{StatorSlotOpening_[]};}
-  Physical Surface(STATOR_FE) = {StatorIron_[],StatorSlotOpening_[]};
-  Physical Surface(STATOR_AIR) = {StatorAir_[]};
-EndIf
 
 If (Qs != N_ss)
 	Physical Line(STATOR_BND_A0) = {StatorPeriod_Right_[]};
@@ -309,6 +303,7 @@ If (Qs != N_ss)
 EndIf
 
 Physical Line(SURF_EXT) = {OuterStator_[]};
+Physical Line(INNER_STATOR) = {innerTest_[]};
 
 //---------------- Superficies para as fases (A,B,C) dos enrolamentos
 

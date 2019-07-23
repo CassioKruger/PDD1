@@ -14,9 +14,10 @@ pp = "Input/Constructive parameters/";
 DefineConstant[
   NbrPolesInModel = { 6, Choices{ 2="2",6="6"}, Name "Input/20Number of poles in FE model", Highlight "Blue"},
   InitialRotorAngle_deg = { 0, Name "Input/20Initial rotor angle [deg]", Highlight "AliceBlue"},
-  InitialRotor2Angle_deg = { 0, Name "Input/20Initial rotor 2 angle [deg]", Highlight "AliceBlue"},
-  Flag_OpenStator = {0, Choices{0,1}, Name "Input/39Open slots in stator"}
+  InitialRotor2Angle_deg = { 0, Name "Input/20Initial rotor 2 angle [deg]", Highlight "AliceBlue"}
 ];
+
+Flag_OpenStator = 0;
 
 NbrStatorPolesInModel = NbrPolesInModel*9;
 If(NbrStatorPolesInModel>50)
@@ -63,12 +64,13 @@ Rotor2Angle_S = Rotor2Angle_R;
 DefineConstant
 [
   AG = {u*0.30, Name StrCat[pp, "Airgap width [m]"], Closed 1,Highlight "Gold"},
-  R_sin = {0.160, Name StrCat[pp, "Raio Interno do Estator [m]"],Highlight "SteelBlue"},
+  R_sin = {0.16025, Name StrCat[pp, "Raio Interno do Estator [m]"],Highlight "SteelBlue"},
   R_sout = {0.210, Name StrCat[pp,  "Raio Externo do Estator [m]"],Highlight "SteelBlue"},
   R_rin = {0.0495, Name StrCat[pp, "Raio Interno do Rotor [m]"],Highlight "SkyBlue"},
   R_rout = {0.133, Name StrCat[pp, "Raio Externo do Rotor [m]"],Highlight "SkyBlue"},
   h_m = {0.008, Name StrCat[pp, "Altura do Imã [m]"],Highlight "ForestGreen"},
-  R_s_mag_in = {u*157.6, Name StrCat[pp, "Raio interno imãs estator [m]"],Highlight "Orchid"}
+  R_s_mag_in = {u*157.6, Name StrCat[pp, "Raio interno imãs estator [m]"],Highlight "Orchid"},
+  R_s_mag_out = {0.160, Name StrCat[pp, "Raio externo imãs estator [m]"],Highlight "Orchid"}
 ];
 
 //-------------------------------------------------------------------------------------------------//

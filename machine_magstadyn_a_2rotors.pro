@@ -41,16 +41,12 @@ Group {
     Surf_bn0, Surf_Inf, Point_ref,
     PhaseA, PhaseB, PhaseC, PhaseA_pos, PhaseB_pos, PhaseC_pos,
     Resistance_Cir, Inductance_Cir, Capacitance_Cir, DomainZt_Cir, DomainSource_Cir,
-    Dummy,
-
-    //testes
-    Test_MB_mags, Test_MB_stator, Test_MB_magsaux, Test_MB_statoraux
+    Dummy
   ];
   // Exception: the group 'MovingBand_PhysicalNb' needs contain exactly one region
   // to pass a test done by the parser. It is declared with a dummy region "0".
   MovingBand_PhysicalNb = Region[0] ;
   MovingBand_PhysicalNb2 = Region[1] ;
-  MovingBand_PhysicalNb3 = Region[2] ;
 }
 
 //-------------------------------------------------------------------------------------
@@ -197,15 +193,10 @@ Group {
 
   MB  = MovingBand2D[ MovingBand_PhysicalNb, Stator_Bnd_MB, Rotor2_Top_Bnd_MB, SymmetryFactor] ;      //stator and top rotor2
   MB2  = MovingBand2D[ MovingBand_PhysicalNb2, Rotor_Bnd_MB, Rotor2_Bottom_Bnd_MB, SymmetryFactor] ;   //rotor 1 and bottom rotor2
-
-  //MB3  = MovingBand2D[ MovingBand_PhysicalNb3, Test_MB_mags, Test_MB_stator, SymmetryFactor] ;
-
-  Air = Region[{ Rotor_Air, Rotor_Airgap, Rotor2_Air, Rotor2_Airgap, Stator_Air, Stator_Airgap, MB, MB2/*, MB3*/} ] ;
-
-
+  Air = Region[{ Rotor_Air, Rotor_Airgap, Rotor2_Air, Rotor2_Airgap, Stator_Air, Stator_Airgap, MB, MB2} ] ;
 
   DomainCC = Region[{ Air, Inds, StatorCC, RotorCC, Rotor2CC }];  //non conducting
-  DomainC  = Region[{ StatorC, RotorC, RotorC}];                 //massive conductor
+  DomainC  = Region[{ StatorC, RotorC, RotorC }];                 //massive conductor
   Domain  = Region[{ DomainCC, DomainC }] ;
 
   DomainNL = Region[{}];
@@ -220,9 +211,9 @@ Group {
   EndIf
 
   DomainKin = Region[1234] ; // Dummy region number for mechanical equation
-  DomainKin2 = Region[2345] ;
+  DomainKin2 = Region[2468] ;
   DomainDummy = Region[12345] ; // Dummy region number for postpro with functions
-  DomainDummy2 = Region[23456] ;
+  DomainDummy2 = Region[246810] ;
 }
 
 
@@ -324,7 +315,7 @@ Function {
   // calls
 
   // Torque computed in postprocessing
-  Torque_mag[] = $Tstator ;
+  Torque_mag[] = $Trotor ;
 }
 
 
@@ -414,7 +405,7 @@ Constraint {
   }
   { Name CurrentVelocity ; // [rad/s]
     Case {
-      { Region DomainKin ; Type Init ; Value 0. ; }
+      { Region DomainKin ; Type Init ; Value  0. ; }
     }
   }
 
@@ -426,7 +417,7 @@ Constraint {
   }
   { Name CurrentVelocity2 ; // [rad/s]
     Case {
-      { Region DomainKin2 ; Type Init ; Value 0. ; }
+      { Region DomainKin2 ; Type Init ; Value  0. ; }
     }
   }
 
@@ -582,16 +573,6 @@ Formulation {
       Galerkin {  [  0*Dof{d a} , {d a} ]  ;
         In Rotor2_Bottom_Bnd_MBaux; Jacobian Sur; Integration I1; }
 
-/*
-      //MB3
-      Galerkin {  [  0*Dof{d a} , {d a} ]  ;
-        In Test_MB_magsaux; Jacobian Sur; Integration I1; }
-      Galerkin {  [  0*Dof{d a} , {d a} ]  ;
-        In Test_MB_statoraux; Jacobian Sur; Integration I1; }
-      //
-*/
-
-
       Galerkin { [ -nu[] * br[] , {d a} ] ;
         In DomainM ; Jacobian Vol ; Integration I1 ; }
 
@@ -659,20 +640,19 @@ Formulation {
       { Name P2 ; Type Global ; NameOfSpace Position2 [P2] ; } // position   MB2
     }
     Equation {
-      GlobalTerm { DtDof [ /*Inertia **/ Dof{V} , {V} ] ; In DomainKin ; }
-      //GlobalTerm { [ Friction[] * Dof{V} , {V} ] ; In DomainKin ; }
-      //GlobalTerm { [        Torque_mec[] , {V} ] ; In DomainKin ; }
-      //GlobalTerm { [       -Torque_mag[] , {V} ] ; In DomainKin ; }
+      GlobalTerm { /*DtDof*/ [ Dof{V} , {V} ] ; In DomainKin ; }  //  rad/s
+      GlobalTerm { [ (rpm*2*Pi)/60, {V} ] ; In DomainKin ; }
+      //GlobalTerm { [        Torque_mec[], {V} ] ; In DomainKin ; }
+      //GlobalTerm { [       Torque_mag[] , {V} ] ; In DomainKin ; }
 
       GlobalTerm { DtDof [ Dof{P} , {P} ] ; In DomainKin ; }
       GlobalTerm {       [-Dof{V} , {P} ] ; In DomainKin ; }
 
       //---------------------------------------------------------------//
 
-      GlobalTerm { DtDof [ /*Inertia*0.7 **/ Dof{V2} , {V2} ] ; In DomainKin2 ; }
-      //GlobalTerm { [ Friction[] * Dof{V2} , {V2} ] ; In DomainKin2 ; }
-      //GlobalTerm { [        Torque_mec[] , {V2} ] ; In DomainKin2 ; }
-      //GlobalTerm { [       -Torque_mag[] , {V2} ] ; In DomainKin2 ; }
+      GlobalTerm { /*DtDof*/ [  Dof{V2} , {V2} ] ; In DomainKin2 ; }  // rad/s
+      GlobalTerm { [ ((rpm*2*Pi)/60) * gear_ratio , {V2} ] ; In DomainKin2 ; }
+      //GlobalTerm { [       Torque_mag[] , {V2} ] ; In DomainKin2 ; }
 
       GlobalTerm { DtDof [ Dof{P2} , {P2} ] ; In DomainKin2 ; }
       GlobalTerm {       [-Dof{V2} , {P2} ] ; In DomainKin2 ; }
@@ -736,8 +716,6 @@ Resolution {
         MeshMovingBand2D[MB] ;
         InitMovingBand2D[MB2] ;
         MeshMovingBand2D[MB2] ;
-        //InitMovingBand2D[MB3] ;
-        //MeshMovingBand2D[MB3] ;
         InitSolution[A] ;
 
         If(Flag_ParkTransformation && Flag_SrcType_Stator==1)
@@ -770,8 +748,6 @@ Resolution {
         MeshMovingBand2D[MB];
         InitMovingBand2D[MB2];
         MeshMovingBand2D[MB2];
-      //  InitMovingBand2D[MB3];
-      //  MeshMovingBand2D[MB3];
 
         InitSolution[A];
         SaveSolution[A];
@@ -784,7 +760,7 @@ Resolution {
 	        InitSolution[M]; // Twice for avoiding warning (a = d_t^2 x)
         EndIf
 
-        TimeLoopTheta[time0, timemax, delta_time, 1]{
+        TimeLoopTheta[time0, timemax, delta_time, 1.]{
     // Euler implicit (1) -- Crank-Nicolson (0.5)
     // FIXME like this theta cannot be controlled by the user
           If(Flag_ParkTransformation && Flag_SrcType_Stator==1)
@@ -807,7 +783,6 @@ Resolution {
             PostOperation[Get_Torque] ;
           }
           {
-            Evaluate[ $Tstator = 0 ];
             Evaluate[ $Trotor = 0 ];
             Evaluate[ $Trotor2 = 0 ];
           }
@@ -816,6 +791,7 @@ Resolution {
             PostOperation[Mechanical] ;
           EndIf
 
+          //ChangeOfCoordinates[ NodesOf[Rotor_Moving], RotatePZ[my_delta_theta[$Velocity]]];
 
           ChangeOfCoordinates[ NodesOf[Rotor_Moving], RotatePZ[delta_theta[]]];
           ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[delta_theta2[]]];
@@ -823,12 +799,10 @@ Resolution {
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];
             Evaluate[ $PreviousPosition2 = $Position2 ];
-            //Evaluate[ $PreviousSpeed = $Speed ];
           EndIf
 
           MeshMovingBand2D[MB] ;
           MeshMovingBand2D[MB2] ;
-          //MeshMovingBand2D[MB3] ;
         }
       EndIf // End Flag_AnalysisType==1 (Time domain)
     }
@@ -898,7 +872,7 @@ PostProcessing {
 
      { Name Flux ;
        Value {
-   Integral { [ SymmetryFactor*AxialLength*Idir[]*NbWires[]/SurfCoil[]* CompZ[{a}] ] ;
+	 Integral { [ SymmetryFactor*AxialLength*Idir[]*NbWires[]/SurfCoil[]* CompZ[{a}] ] ;
            In Inds  ; Jacobian Vol ; Integration I1 ; } } }
 
      { Name Force_vw ;
@@ -907,53 +881,16 @@ PostProcessing {
          Integral {
            Type Global ; [ 0.5 * nu[] * VirtualWork [{d a}] * AxialLength ];
            In ElementsOf[Rotor_Airgap, OnOneSideOf Rotor_Bnd_MB];
-            Jacobian Vol ; Integration I1 ; }
+	   Jacobian Vol ; Integration I1 ; }
        }
-     }
-
-      { Name Force_vw22 ;Value {
-         Integral {
-           Type Global ; [ 0.5 * nu[] * VirtualWork [{d a}] * AxialLength ];
-           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor2_Top_Bnd_MB];
-       Jacobian Vol ; Integration I1 ; }
-       }
-
-     }
-
-     { Name Force_vw21 ;Value {
-         Integral {
-           Type Global ; [ 0.5 * nu[] * VirtualWork [{d a}] * AxialLength ];
-           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor2_Bottom_Bnd_MB];
-       Jacobian Vol ; Integration I1 ; }
-       }
-
      }
 
      { Name Torque_vw ; Value {
-   // Torque computation via Virtual Works
+	 // Torque computation via Virtual Works
          Integral { Type Global ;
            [ CompZ[ 0.5 * nu[] * XYZ[] /\ VirtualWork[{d a}] ] * AxialLength ];
            In ElementsOf[Rotor_Airgap, OnOneSideOf Rotor_Bnd_MB];
-     Jacobian Vol ; Integration I1 ; }
-       }
-     }
-
-     //rotor2
-     { Name Torque_vw22 ; Value {
-   // Torque computation via Virtual Works
-         Integral { Type Global ;
-           [ CompZ[ 0.5 * nu[] * XYZ[] /\ VirtualWork[{d a}] ] * AxialLength ];
-           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor2_Top_Bnd_MB];
-     Jacobian Vol ; Integration I1 ; }
-       }
-     }
-
-     { Name Torque_vw21 ; Value {
-   // Torque computation via Virtual Works
-         Integral { Type Global ;
-           [ CompZ[ 0.5 * nu[] * XYZ[] /\ VirtualWork[{d a}] ] * AxialLength ];
-           In ElementsOf[Rotor2_Airgap, OnOneSideOf Rotor2_Bottom_Bnd_MB];
-     Jacobian Vol ; Integration I1 ; }
+	   Jacobian Vol ; Integration I1 ; }
        }
      }
 
@@ -1021,6 +958,8 @@ PostProcessing {
 
      { Name RotorPosition_deg ;
        Value { Term { Type Global; [ RotorPosition_deg[] ] ; In DomainDummy ; } } }
+     { Name Rotor2Position_deg ;
+       Value { Term { Type Global; [ Rotor2Position_deg[] ] ; In DomainDummy2 ; } } }
      { Name Theta_Park_deg ;
        Value { Term { Type Global; [ Theta_Park_deg[] ] ; In DomainDummy ; } } }
      { Name IA  ;
@@ -1038,9 +977,8 @@ PostProcessing {
 
 
      //rotor2
-     { Name Rotor2Position_deg ;
-       Value { Term { Type Global; [ Rotor2Position_deg[] ] ; In DomainDummy2 ; } } }
-     { Name Theta_Park_deg2 ;
+
+     /*{ Name Theta_Park_deg2 ;
        Value { Term { Type Global; [ Theta_Park_deg[] ] ; In DomainDummy2 ; } } }
      { Name IA2  ;
        Value { Term { Type Global; [ IA[] ] ; In DomainDummy2 ; } } }
@@ -1053,7 +991,7 @@ PostProcessing {
      { Name Flux_q2  ;
        Value { Term { Type Global; [ CompY[Flux_dq0[]] ] ; In DomainDummy2 ; } } }
      { Name Flux_02  ;
-       Value { Term { Type Global; [ CompZ[Flux_dq0[]] ] ; In DomainDummy2 ; } } }
+       Value { Term { Type Global; [ CompZ[Flux_dq0[]] ] ; In DomainDummy2 ; } } }*/
    }
  }
 
@@ -1062,14 +1000,14 @@ PostProcessing {
      { Name P ; Value { Term { [ {P} ]  ; In DomainKin ; } } } // Position [rad]
      { Name Pdeg ; Value { Term { [ {P}*180/Pi ]  ; In DomainKin ; } } } // Position [deg]
      { Name V ; Value { Term { [ {V} ]  ; In DomainKin ; } } } // Velocity [rad/s]
-     { Name Vrpm ; Value { Term { [ {V}*30/Pi ]  ; In DomainKin ; } } } // Velocity [rpm]
+     { Name Vrpm ; Value { Term { [ {V}*60/(2*Pi) ]  ; In DomainKin ; } } } // Velocity [rpm]
 
       //------------------------------------------------------------------------------------//
       //MB2
      { Name P2 ; Value { Term { [ {P2} ]  ; In DomainKin2 ; } } } // Position [rad]
      { Name Pdeg2 ; Value { Term { [ {P2}*180/Pi ]  ; In DomainKin2 ; } } } // Position [deg]
      { Name V2 ; Value { Term { [ {V2} ]  ; In DomainKin2 ; } } } // Velocity [rad/s]
-     { Name Vrpm2 ; Value { Term { [ {V2}*30/Pi ]  ; In DomainKin2 ; } } } // Velocity [rpm]
+     { Name Vrpm2 ; Value { Term { [ {V2}*60/(2*Pi) ]  ; In DomainKin2 ; } } } // Velocity [rpm]
    }
  }
 
@@ -1243,6 +1181,8 @@ PostOperation Get_GlobalQuantities UsingPost MagStaDyn_a_2D {
 
 }
 
+
+
 PostOperation Get_Torque UsingPost MagStaDyn_a_2D {
   //rotor 1
   Print[ Torque_Maxwell[Rotor_Airgap], OnGlobal, Format TimeTable,
@@ -1272,6 +1212,7 @@ PostOperation Get_Torque_cplx UsingPost MagStaDyn_a_2D {
    File > StrCat[ResDir,"Ts",ExtGnuplot], StoreInVariable $Tstator,
    SendToServer StrCat[po_mecT,"stator"]{0}, Color "Ivory" ];
 }
+
 
 PostOperation Mechanical UsingPost Mechanical {
 

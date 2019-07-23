@@ -150,25 +150,6 @@ Group{
   EndFor
   Rotor_Bnd_MBaux = Region[ {Rotor_Bnd_MB, -Rotor_Bnd_MB~{1}}];
 
-/*
-  // testando solução
-  Test_MB_mags = Region[TOP_MAGNETS];
-  Test_MB_stator = Region[INNER_STATOR];
-  //---------
-
-  For k In {1:SymmetryFactor}
-    Test_MB_mags~{k} = Region[ (TOP_MAGNETS+k-1) ];
-    Test_MB_mags += Region[ Test_MB_mags~{k} ];
-  EndFor
-  Test_MB_magsaux = Region[ {Test_MB_mags, -Test_MB_mags~{1}}];
-
-  For k In {1:SymmetryFactor}
-    Test_MB_stator~{k} = Region[ (INNER_STATOR+k-1) ];
-    Test_MB_stator += Region[ Test_MB_stator~{k} ];
-  EndFor
-  Test_MB_statoraux = Region[ {Test_MB_stator, -Test_MB_stator~{1}}];
-
-*/
 }
 
 ////-----------------------------------------------------------------------------------------------------------------////
@@ -187,7 +168,7 @@ Function {
   EndFor
 
   //Data for modeling a stranded inductor
-  NbWires[]  = 104 ; // Number of wires per slot
+  NbWires[]  = 30 ; // Number of wires per slot
   // STATOR_IND_AM comprises all the slots in that phase, we need thus to divide by the number of slots
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface
@@ -204,6 +185,8 @@ Function {
 
   wr = rpm/60*2*Pi ; // speed in rad_mec/s
 
+  wr2 = wr*(NbrPolesInModel/NbrSectStatorMag) ; // speed in rad_mec/s rotor 2
+
   // supply at fixed position
   DefineConstant
   [
@@ -215,7 +198,7 @@ Function {
 
   DefineConstant
   [
-    thetaMax_deg = { 30, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }
+    thetaMax_deg = { 180, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }
   ];
 
   theta0   = InitialRotorAngle + 0. ;
@@ -240,12 +223,12 @@ Function {
 
   //considering that the outer rotor is stationary, the gear ratio becomes:
   // -> pH*wH = nP*wP
-  // -> Gr = pH/nP = wP/wH
-  // -> gear ratio = nbr of poles at rotor 1 / nbr of modulators
+  // -> Gr = wH/wP = nP/pH
+  // -> gear ratio = nbr of modulators / nbr of pair-poles at rotor 1
 
   // in this case, the nbr of modulators is equal to the nbr of poles at the outer rotor, so:
 
-  gear_ratio = NbrPolesInModel/NbrSectStatorMag;
+  gear_ratio = (NbrPolesInModel/NbrSectStatorMag);
 
   delta_theta[] = delta_theta_deg * deg2rad ;   //angulo de giro do rotor 1
   delta_theta2[] = delta_theta[] * gear_ratio ; //angulo de giro do rotor 2
@@ -263,7 +246,7 @@ Function {
   RotorPosition[] = InitialRotorAngle + $Time * wr ;
   RotorPosition_deg[] = RotorPosition[]*180/Pi;
 
-  Rotor2Position[] = InitialRotor2Angle + $Time * wr ;
+  Rotor2Position[] = InitialRotor2Angle + $Time * wr2 ;
   Rotor2Position_deg[] = Rotor2Position[]*180/Pi;
 
 //+++

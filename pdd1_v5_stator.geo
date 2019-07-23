@@ -53,15 +53,15 @@ For i In {0:N_ss-1}
 	 Point(dP+1) = {b_1/2, R_sin*Sin((Pi/2)-aux2), 0, pslo};					//entrada direita do slot
 	 Point(dP+2) = {b_1/2, h_r1-Sin(aux1)*r1, 0, pslo};
 	 Point(dP+3) = {0, h_r1-Sin(aux1)*r1, 0, pslo};
-	 Point(dP+4) = {0, h_r1, 0, psl};										//centro do circulo inferior
-	 Point(dP+5) = {b_2,  h_r1, 0, psl};									//ponto mais a direita do circulo inferior
-	 Point(dP+6) = {0, h_r2, 0, psl};										//centro do circulo superior
-	 Point(dP+7) = {b_3, h_r2, 0, psl};										//ponto mais a direita do circulo superior
-	 Point(dP+8) = {0, h_r2+r2, 0, pout};									// ponto mais acima do circulo superior
-	 Point(dP+9) = {R_sout*Sin(Pi/Qs), R_sout*Cos(Pi/Qs), 0, pout};			// outer stator sector
-	 Point(dP+10) = {0, R_sout, 0, pout};									// outer stator center
-	 Point(dP+11) = {R_sin*Sin(Pi/Qs), R_sin*Cos(Pi/Qs), 0, pslo};			// inner stator sector
-	 Point(dP+12) = {0, R_sin, 0, pslo};									//inner stator center
+	 Point(dP+4) = {0, h_r1, 0, psl};																	//centro do circulo inferior
+	 Point(dP+5) = {b_2,  h_r1, 0, psl};															//ponto mais a direita do circulo inferior
+	 Point(dP+6) = {0, h_r2, 0, psl};																	//centro do circulo superior
+	 Point(dP+7) = {b_3, h_r2, 0, psl};																//ponto mais a direita do circulo superior
+	 Point(dP+8) = {0, h_r2+r2, 0, pout};															//ponto mais acima do circulo superior
+	 Point(dP+9) = {R_sout*Sin(Pi/Qs), R_sout*Cos(Pi/Qs), 0, pout};		//outer stator sector
+	 Point(dP+10) = {0, R_sout, 0, pout};															//outer stator center
+	 Point(dP+11) = {R_sin*Sin(Pi/Qs), R_sin*Cos(Pi/Qs), 0, pslo};		//inner stator sector
+	 Point(dP+12) = {0, R_sin, 0, pslo};															//inner stator center
 
 	 //enrolamento mais interno
 	 Point(dP+13) = {0, 165.7920*u, 0, 1.5*psl};

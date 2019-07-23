@@ -23,8 +23,8 @@ For i In {0:N_ss_mag-1}
 
 	 Point(dP+1) = {0, R_s_mag_in, 0, pMB};												//magnet center
 	 Point(dP+2) = {R_s_mag_in*Sin(SMag_ang), R_s_mag_in*Cos(SMag_ang), 0, pMB};	//magnet sector (borda)
-	 Point(dP+3) = {(R_sin-0.0001)*Sin(SMag_ang),(R_sin-0.0001)*Cos(SMag_ang),0,pslo};						//magnet sector to inner stator
-	 Point(dP+4) = {0, (R_sin-0.0001), 0, pslo};											//magnet center to inner stator
+	 Point(dP+3) = {(R_s_mag_out)*Sin(SMag_ang),(R_s_mag_out)*Cos(SMag_ang),0,pslo};						//magnet sector to inner stator
+	 Point(dP+4) = {0, (R_s_mag_out), 0, pslo};											//magnet center to inner stator
 
 	 Point(dP+5) = {0, R_gs, 0, pMB};												//sliding center
 	 Point(dP+6) = {R_gs*Sin(SMag_ang), R_gs*Cos(SMag_ang), 0, pMB}; 				//sliding sector
@@ -84,8 +84,6 @@ For i In {0:N_ss_mag-1}
 	 Line Loop(newll) = {dR+3,dR+2,-(dR+4),-(dR+1)};
 	 dH = news; Plane Surface(news) = -rev*{newll-1};
 	 StatorMagnetics_[] += dH;
-
-
 
 	 EndFor
 EndFor

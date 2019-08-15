@@ -168,7 +168,7 @@ Function {
   EndFor
 
   //Data for modeling a stranded inductor
-  NbWires[]  = 30 ; // Number of wires per slot
+  NbWires[]  = 15 ; // Number of wires per slot
   // STATOR_IND_AM comprises all the slots in that phase, we need thus to divide by the number of slots
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface

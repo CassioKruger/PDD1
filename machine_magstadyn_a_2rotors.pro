@@ -206,7 +206,7 @@ Group {
   EndIf
 
   DomainV = Region[{}];
-  If(Term_vxb) // or not dynamics in time domain + mechanics
+  If(!Term_vxb) // or not dynamics in time domain + mechanics
     DomainV = Region[{ RotorC, Rotor2C }];
   EndIf
 
@@ -315,7 +315,7 @@ Function {
   // calls
 
   // Torque computed in postprocessing
-  Torque_mag[] = $Trotor ;
+  Torque_mag[] = $Tstator ;
 }
 
 
@@ -640,8 +640,9 @@ Formulation {
       { Name P2 ; Type Global ; NameOfSpace Position2 [P2] ; } // position   MB2
     }
     Equation {
+      // rotor de alta rotacao (com imas)
       GlobalTerm { /*DtDof*/ [ Dof{V} , {V} ] ; In DomainKin ; }  //  rad/s
-      GlobalTerm { [ (rpm*2*Pi)/60, {V} ] ; In DomainKin ; }
+      GlobalTerm { [ ((rpmAux[]*2*Pi)/60)* gear_ratio, {V} ] ; In DomainKin ; }
       //GlobalTerm { [        Torque_mec[], {V} ] ; In DomainKin ; }
       //GlobalTerm { [       Torque_mag[] , {V} ] ; In DomainKin ; }
 
@@ -650,9 +651,10 @@ Formulation {
 
       //---------------------------------------------------------------//
 
+      // rotor de baixa rotacao (moduladores)
       GlobalTerm { /*DtDof*/ [  Dof{V2} , {V2} ] ; In DomainKin2 ; }  // rad/s
-      GlobalTerm { [ ((rpm*2*Pi)/60) * gear_ratio , {V2} ] ; In DomainKin2 ; }
-      //GlobalTerm { [       Torque_mag[] , {V2} ] ; In DomainKin2 ; }
+      GlobalTerm { [ ((rpmAux[]*2*Pi)/60)  , {V2} ] ; In DomainKin2 ; }
+      ///GlobalTerm { [       Torque_mag[] , {V2} ] ; In DomainKin2 ; }
 
       GlobalTerm { DtDof [ Dof{P2} , {P2} ] ; In DomainKin2 ; }
       GlobalTerm {       [-Dof{V2} , {P2} ] ; In DomainKin2 ; }
@@ -760,7 +762,8 @@ Resolution {
 	        InitSolution[M]; // Twice for avoiding warning (a = d_t^2 x)
         EndIf
 
-        TimeLoopTheta[time0, timemax, delta_time, 1.]{
+        //delta_time
+        TimeLoopTheta[time0, tempoMax, delta_time[], 1.]{
     // Euler implicit (1) -- Crank-Nicolson (0.5)
     // FIXME like this theta cannot be controlled by the user
           If(Flag_ParkTransformation && Flag_SrcType_Stator==1)
@@ -793,8 +796,8 @@ Resolution {
 
           //ChangeOfCoordinates[ NodesOf[Rotor_Moving], RotatePZ[my_delta_theta[$Velocity]]];
 
-          ChangeOfCoordinates[ NodesOf[Rotor_Moving], RotatePZ[delta_theta[]]];
-          ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[delta_theta2[]]];
+          ChangeOfCoordinates[ NodesOf[Rotor_Moving], RotatePZ[delta_theta_alta[]]];
+          ChangeOfCoordinates[ NodesOf[Rotor2_Moving], RotatePZ[delta_theta_baixa[]]];
           If(Flag_ImposedSpeed)
             // Keep track of previous position
             Evaluate[ $PreviousPosition = $Position ];
@@ -1161,7 +1164,7 @@ PostOperation Get_GlobalQuantities UsingPost MagStaDyn_a_2D {
        SendToServer StrCat[poF,"0"]{0}, Color "LightYellow" ];
     EndIf
   EndIf
-
+/*
   //rotor 1
   Print[ JouleLosses[Rotor], OnGlobal, Format TimeTable,
    File > StrCat[ResDir,"JL",ExtGnuplot], LastTimeStepOnly,
@@ -1178,11 +1181,11 @@ PostOperation Get_GlobalQuantities UsingPost MagStaDyn_a_2D {
   Print[ JouleLosses[Rotor2_Fe], OnGlobal, Format TimeTable,
    File > StrCat[ResDir,"JL_Fe2",ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[poJL,"rotor2_fe"]{0}, Color "LightYellow" ];
-
+*/
 }
 
 
-
+/*
 PostOperation Get_Torque UsingPost MagStaDyn_a_2D {
   //rotor 1
   Print[ Torque_Maxwell[Rotor_Airgap], OnGlobal, Format TimeTable,
@@ -1212,34 +1215,34 @@ PostOperation Get_Torque_cplx UsingPost MagStaDyn_a_2D {
    File > StrCat[ResDir,"Ts",ExtGnuplot], StoreInVariable $Tstator,
    SendToServer StrCat[po_mecT,"stator"]{0}, Color "Ivory" ];
 }
-
+*/
 
 PostOperation Mechanical UsingPost Mechanical {
 
-  Print[ P, OnRegion DomainKin, Format Table,
+  /*Print[ P, OnRegion DomainKin, Format Table,
    File > StrCat[ResDir,"P", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Position,
-   SendToServer StrCat[po_mecRotor1 ,"Position [rad]"]{0}, Color "Red4"] ;
+   SendToServer StrCat[po_mecRotor1 ,"Position [rad]"]{0}, Color "Red4"] ;*/
   Print[ Pdeg, OnRegion DomainKin, Format Table,
    File > StrCat[ResDir,"P_deg", ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[po_mecRotor1 ,"Position [deg]"]{0}, Color "Red4"] ;
-  Print[ V, OnRegion DomainKin, Format Table,
+  /*Print[ V, OnRegion DomainKin, Format Table,
    File > StrCat[ResDir,"V", ExtGnuplot], LastTimeStepOnly,
-   SendToServer StrCat[po_mecRotor1 ,"Velocity [rad\s]"]{0}, Color "Red1"] ;//MediumPurple1
+   SendToServer StrCat[po_mecRotor1 ,"Velocity [rad\s]"]{0}, Color "Red1"] ;//MediumPurple1*/
   Print[ Vrpm, OnRegion DomainKin, Format Table,
    File > StrCat[ResDir,"Vrpm", ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[po_mecRotor1 ,"Velocity [rpm]"]{0}, Color "Red1"] ;//MediumPurple1
 
     //------------------------------------------------------------------//
     //MB2 Friction
-  Print[ P2, OnRegion DomainKin2, Format Table,
+  /*Print[ P2, OnRegion DomainKin2, Format Table,
    File > StrCat[ResDir,"P2", ExtGnuplot], LastTimeStepOnly, StoreInVariable $Position2,
-   SendToServer StrCat[po_mecRotor2,"Position2 [rad]"]{0}, Color "ForestGreen"] ;
+   SendToServer StrCat[po_mecRotor2,"Position2 [rad]"]{0}, Color "ForestGreen"] ;*/
   Print[ Pdeg2, OnRegion DomainKin2, Format Table,
    File > StrCat[ResDir,"P_deg2", ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[po_mecRotor2,"Position2 [deg]"]{0}, Color "ForestGreen"] ;
-  Print[ V2, OnRegion DomainKin2, Format Table,
+  /*Print[ V2, OnRegion DomainKin2, Format Table,
    File > StrCat[ResDir,"V2", ExtGnuplot], LastTimeStepOnly,
-   SendToServer StrCat[po_mecRotor2,"Velocity2 [rad\s]"]{0}, Color "Green"] ;//MediumPurple1
+   SendToServer StrCat[po_mecRotor2,"Velocity2 [rad\s]"]{0}, Color "Green"] ;//MediumPurple1*/
   Print[ Vrpm2, OnRegion DomainKin2, Format Table,
    File > StrCat[ResDir,"Vrpm2", ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[po_mecRotor2,"Velocity2 [rpm]"]{0}, Color "Green"] ;//MediumPurple1

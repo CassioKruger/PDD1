@@ -12,9 +12,13 @@ deg2rad = Pi/180;   // graus para radianos
 pp = "Input/Constructive parameters/";
 
 DefineConstant[
-  NbrPolesInModel = { 6, Choices{ 2="2",6="6"}, Name "Input/20Number of poles in FE model", Highlight "Blue"},
-  InitialRotorAngle_deg = { 0, Name "Input/20Initial rotor angle [deg]", Highlight "AliceBlue"},
-  InitialRotor2Angle_deg = { 0, Name "Input/20Initial rotor 2 angle [deg]", Highlight "AliceBlue"}
+  NbrPolesInModel = { 6, Choices{ 2="2",6="6"}, Name "Input/20Numero de polos", Highlight "Blue"},
+  InitialRotorAngle_deg = { 0, Name "Input/20Anglo inicial rotor 1 [deg]", Highlight "AliceBlue",
+                            Help Str["Angulo inicial do rotor de alta rotação da maquina PDD"]
+                          },
+  InitialRotor2Angle_deg = { 0, Name "Input/20Angulo inicial rotor 2 [deg]", Highlight "AliceBlue",
+                            Help Str["Angulo inicial do rotor de baixa rotação da maquina PDD"]
+                          }
 ];
 
 Flag_OpenStator = 0;
@@ -81,10 +85,10 @@ sigma_fe = 0. ; // laminated steel
 DefineConstant
 [
   mur_fe = {1000, Name StrCat[pp, "Relative permeability for linear case"]},   //default = 1000
-  b_remanent = {1.2, Name StrCat[pp, "Remanent induction [T]"] }
+  b_remanent = {0.2, Name StrCat[pp, "Remanent induction [T]"] }
 ];
 
-rpm_nominal = 1200;
+rpm_nominal = 144;
 Inominal = 10.9 ; // Nominal current
 Tnominal = 2.5 ; // Nominal torque
 

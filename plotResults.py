@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 flag = input("Voltage and Current = 1 \n Torque = 2 \n Position and Velocity = 3\n")
 
 tempo = pd.read_csv("res/Ua.dat",sep='  ', header=None, index_col=None,usecols=[0],engine= 'python')
-tempoPosVel = pd.read_csv("res/P.dat",sep='  ', header=None, index_col=None,usecols=[0],engine= 'python')
+tempoPosVel = pd.read_csv("res/P_deg.dat",sep='  ', header=None, index_col=None,usecols=[0],engine= 'python')
 
 tensaoUa = pd.read_csv("res/Ua.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 tensaoUb = pd.read_csv("res/Ub.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
@@ -15,17 +15,17 @@ correnteIa = pd.read_csv("res/Ia.dat",sep='  ', header=None, index_col=None,usec
 correnteIb = pd.read_csv("res/Ib.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 correnteIc = pd.read_csv("res/Ic.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 
-torqueRotor = pd.read_csv("res/Tr.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
-torqueEstator = pd.read_csv("res/Ts.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
+#torqueRotor = pd.read_csv("res/Tr.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
+#torqueEstator = pd.read_csv("res/Ts.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 
 posRotor1Deg = pd.read_csv("res/P_deg.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
-posRotor1Rad = pd.read_csv("res/P.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
-veloRotor1Rad_sec = pd.read_csv("res/V.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
+#posRotor1Rad = pd.read_csv("res/P.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
+#veloRotor1Rad_sec = pd.read_csv("res/V.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 veloRotor1Rpm = pd.read_csv("res/Vrpm.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 
 posRotor2Deg = pd.read_csv("res/P_deg2.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
-posRotor2Rad = pd.read_csv("res/P2.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
-veloRotor2Rad_sec = pd.read_csv("res/V2.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
+#posRotor2Rad = pd.read_csv("res/P2.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
+#veloRotor2Rad_sec = pd.read_csv("res/V2.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 veloRotor2Rpm = pd.read_csv("res/Vrpm2.dat",sep='  ', header=None, index_col=None,usecols=[1],engine= 'python')
 
 if (flag == '1'):
@@ -71,37 +71,18 @@ if (flag == '3'):
     print(flag)
     plt.figure(1)
 
-    plt.title("Rotor 1")
     # pos rotor 1
-    plt.subplot(2,2,1)
+    plt.subplot(1,2,1)
     plt.plot(tempoPosVel,posRotor1Deg,color = [0, 0.4470, 0.7410])
-    plt.plot(tempoPosVel,posRotor1Rad,color = [0.8500, 0.3250, 0.0980])
+    plt.plot(tempoPosVel,posRotor2Deg,color = [0.8500, 0.3250, 0.0980])
     plt.xlabel("Time (s)")
     plt.ylabel("Position")
-    plt.legend(["Deg","Rad"])
+    plt.legend(["IPMA","Moduladores"])
 
-    # vel rotor 1
-    plt.subplot(2,2,3)
-    plt.plot(tempoPosVel,veloRotor1Rad_sec,color = [0, 0.4470, 0.7410])
-    plt.plot(tempoPosVel,veloRotor1Rpm,color = [0.8500, 0.3250, 0.0980])
-    plt.xlabel("Time (s)")
-    plt.ylabel("Velocity")
-    plt.legend(["[Rad/s]","[RPM]"])
-
-    plt.title("Rotor 2")
-    # pos rotor 2
-    plt.subplot(2,2,2)
-    plt.plot(tempoPosVel,posRotor2Deg,color = [0, 0.4470, 0.7410])
-    plt.plot(tempoPosVel,posRotor2Rad,color = [0.8500, 0.3250, 0.0980])
-    plt.xlabel("Time (s)")
-    plt.ylabel("Position")
-    plt.legend(["Deg","Rad"])
-
-    # vel rotor 2
-    plt.subplot(2,2,4)
-    plt.plot(tempoPosVel,veloRotor2Rad_sec,color = [0, 0.4470, 0.7410])
+    plt.subplot(1,2,2)
+    plt.plot(tempoPosVel,veloRotor1Rpm,color = [0, 0.4470, 0.7410])
     plt.plot(tempoPosVel,veloRotor2Rpm,color = [0.8500, 0.3250, 0.0980])
     plt.xlabel("Time (s)")
     plt.ylabel("Velocity")
-    plt.legend(["[Rad/s]","[RPM]"])
+    plt.legend(["IPMA","Moduladores"])
     plt.show()

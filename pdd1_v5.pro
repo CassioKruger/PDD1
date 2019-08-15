@@ -192,10 +192,10 @@ Function {
                   Help Str["Intervalo de tempo de cada passo da simulação"]
                  },
 
-    tempoMax = { 0.1, Name "Input/24Tempo de simu (s)", Highlight "Linen",
+    tempoMax = { 0.13, Name "Input/24Tempo de simu (s)", Highlight "Linen",
                 Help Str["Tempo máximo da simulação da simulação"]
                },
-    passoCarga = { 30, Name "Input/25Passo Carga", Highlight "Linen",
+    passoCarga = { 25, Name "Input/25Passo Carga", Highlight "Linen",
                 Help Str["Passo da simulação em que uma carga é adicionada, variando a velocidade"]
                }
   ]; // speed in rpm
@@ -203,7 +203,7 @@ Function {
 
     //smoothStep[] = ($TimeStep) <= (3) ? 0. : Tanh[Pi*($Time/0.2)];
 
-  smoothStep[] = ($TimeStep) <= (passoCarga) ? 0. : Tanh[Pi* ( (($TimeStep-passoCarga)*$DTime)/0.28 ) ];
+  smoothStep[] = ($TimeStep) <= (passoCarga) ? 0. : Tanh[Pi* ( (($TimeStep-passoCarga)*$DTime)/1.2 ) ];
 
   rpmAux[] = ($TimeStep) <= (passoCarga) ? rpm : rpm - 80*smoothStep[]; //FUNCIONOU!!
 

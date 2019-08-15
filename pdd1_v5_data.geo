@@ -4,7 +4,7 @@
 
 u = 1e-3;           // unidade = mm
 mm = 1e-3;
-cm = 1e-2;          // unidade 
+cm = 1e-2;          // unidade
 deg2rad = Pi/180;   // graus para radianos
 
 //Point(0) = {0,0,0,1.0}; //origem/
@@ -12,16 +12,21 @@ deg2rad = Pi/180;   // graus para radianos
 pp = "Input/Constructive parameters/";
 
 DefineConstant[
-  NbrPolesInModel = { 6, Choices{ 2="2",6="6"}, Name "Input/20Number of poles in FE model", Highlight "Blue"},
-  InitialRotorAngle_deg = { 0, Name "Input/20Initial rotor angle [deg]", Highlight "AliceBlue"},
-  InitialRotor2Angle_deg = { 0, Name "Input/20Initial rotor 2 angle [deg]", Highlight "AliceBlue"},
-  Flag_OpenStator = {0, Choices{0,1}, Name "Input/39Open slots in stator"}
+  NbrPolesInModel = { 6, Choices{ 2="2",6="6"}, Name "Input/20Numero de polos", Highlight "Blue"},
+  InitialRotorAngle_deg = { 0, Name "Input/20Anglo inicial rotor 1 [deg]", Highlight "AliceBlue",
+                            Help Str["Angulo inicial do rotor de alta rotação da maquina PDD"]
+                          },
+  InitialRotor2Angle_deg = { 0, Name "Input/20Angulo inicial rotor 2 [deg]", Highlight "AliceBlue",
+                            Help Str["Angulo inicial do rotor de baixa rotação da maquina PDD"]
+                          }
 ];
+
+Flag_OpenStator = 0;
 
 NbrStatorPolesInModel = NbrPolesInModel*9;
 If(NbrStatorPolesInModel>50)
   NbrStatorPolesInModel=50;
-EndIf 
+EndIf
 
 NbrPolesTot = 6;                                                // Numero total de polos na máquina
 NbrPolePairs = NbrPolesTot/2 ;
@@ -63,12 +68,13 @@ Rotor2Angle_S = Rotor2Angle_R;
 DefineConstant
 [
   AG = {u*0.30, Name StrCat[pp, "Airgap width [m]"], Closed 1,Highlight "Gold"},
-  R_sin = {0.160, Name StrCat[pp, "Raio Interno do Estator [m]"],Highlight "SteelBlue"},
+  R_sin = {0.16025, Name StrCat[pp, "Raio Interno do Estator [m]"],Highlight "SteelBlue"},
   R_sout = {0.210, Name StrCat[pp,  "Raio Externo do Estator [m]"],Highlight "SteelBlue"},
   R_rin = {0.0495, Name StrCat[pp, "Raio Interno do Rotor [m]"],Highlight "SkyBlue"},
   R_rout = {0.133, Name StrCat[pp, "Raio Externo do Rotor [m]"],Highlight "SkyBlue"},
   h_m = {0.008, Name StrCat[pp, "Altura do Imã [m]"],Highlight "ForestGreen"},
-  R_s_mag_in = {u*157.6, Name StrCat[pp, "Raio interno imãs estator [m]"],Highlight "Orchid"}
+  R_s_mag_in = {u*157.6, Name StrCat[pp, "Raio interno imãs estator [m]"],Highlight "Orchid"},
+  R_s_mag_out = {0.160, Name StrCat[pp, "Raio externo imãs estator [m]"],Highlight "Orchid"}
 ];
 
 //-------------------------------------------------------------------------------------------------//
@@ -79,10 +85,10 @@ sigma_fe = 0. ; // laminated steel
 DefineConstant
 [
   mur_fe = {1000, Name StrCat[pp, "Relative permeability for linear case"]},   //default = 1000
-  b_remanent = {1.2, Name StrCat[pp, "Remanent induction [T]"] }
+  b_remanent = {0.2, Name StrCat[pp, "Remanent induction [T]"] }
 ];
 
-rpm_nominal = 1200;
+rpm_nominal = 144;
 Inominal = 10.9 ; // Nominal current
 Tnominal = 2.5 ; // Nominal torque
 
@@ -111,12 +117,12 @@ ROTOR2_BOTTOM_BND_MOVING_BAND = 12000;
 ROTOR2_BND_A0 = 13000;
 ROTOR2_BND_A1 = 14000;
 
-SURF_INT     = 15000 ;
+SURF_INT     = 99000 ;
 
 // Stator
 STATOR_FE     = 16000 ;
 STATOR_AIR    = 17000 ;
-STATOR_MAGNET = 40000 ;
+STATOR_MAGNET = 50000 ;
 STATOR_AIRGAP = 19000 ;
 STATOR_SLOTOPENING = 20000 ; // Slot opening
 
@@ -138,3 +144,6 @@ SURF_EXT = 26000 ; // outer boundary
 MOVING_BAND = 27000 ;
 
 NICEPOS = 28000 ;
+
+TOP_MAGNETS = 200000;
+INNER_STATOR = 201000;

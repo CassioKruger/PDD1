@@ -6,19 +6,19 @@ Include "pdd1_v5_data.geo";
 
 DefineConstant
 [
-  Flag_AnalysisType = {1,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/19Type of analysis", Highlight "Blue",
+  Flag_AnalysisType = {1,  Choices{0="Static",  1="Time domain", 2="Freq Domain"}, Name "Input/01Type of analysis", Highlight "Blue",
     Help Str["- Use 'Static' to compute static fields created in the machine",
       "- Use 'Time domain' to compute the dynamic response of the machine"]} ,
 
   Flag_SrcType_Stator = { 0, Choices{0="None",1="Current"},
-                             Name "Input/41Source type in stator", Highlight "Blue"},
+                             Name "Input/02Fonte no estator", Highlight "Blue"},
 
-  Flag_NL = { 1, Choices{0,1}, Name "Input/60Nonlinear BH-curve"},
+  Flag_NL = { 1, Choices{0,1}, Name "Input/03Curva BH Não Linear"},
 
   Flag_NL_law_Type = { 1, Choices{
       0="Analytical", 1="Interpolated",
       2="Analytical VH800-65D", 3="Interpolated VH800-65D"},
-    Name "Input/61BH-curve", Highlight "Blue", Visible Flag_NL}
+    Name "Input/04BH-curve", Highlight "Blue", Visible Flag_NL}
 ];
 
 Flag_Cir = !Flag_SrcType_Stator ;
@@ -149,6 +149,7 @@ Group{
     Rotor_Bnd_MB += Region[ Rotor_Bnd_MB~{k} ];
   EndFor
   Rotor_Bnd_MBaux = Region[ {Rotor_Bnd_MB, -Rotor_Bnd_MB~{1}}];
+
 }
 
 ////-----------------------------------------------------------------------------------------------------------------////
@@ -163,11 +164,11 @@ Function {
   EndFor
 
   For k In {1:nbMagnetsStator}
-    br[ Stator_Magnet~{k} ] =(-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
+    br[ Stator_Magnet~{k} ] = (-1)^(k-1) * b_remanent * Vector[ Cos[Atan2[Y[],X[]]], Sin[Atan2[Y[],X[]]], 0 ];
   EndFor
 
   //Data for modeling a stranded inductor
-  NbWires[]  = 104 ; // Number of wires per slot
+  NbWires[]  = 30 ; // Number of wires per slot
   // STATOR_IND_AM comprises all the slots in that phase, we need thus to divide by the number of slots
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface
@@ -179,36 +180,70 @@ Function {
 
   DefineConstant
   [
-    rpm = { rpm_nominal, Name "Input/7speed in rpm", Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
+    rpm = { rpm_nominal, Name "Input/21Vel. em RPM", Highlight "LemonChiffon", Visible (Flag_AnalysisType==1),
+            Help Str["Velocidade do rotor de baixa rotação (turbina)"]
+          },
+
+    rpmAlta = { rpm*((NbrSectStatorMag/2)/(NbrPolesInModel/2)), ReadOnly 1, Name "Input/22Vel. em RPM", Highlight "LemonChiffon",
+                Help Str["Velocidade do rotor de alta rotação (rotor interno, imas)"]
+              },
+
+    passoTempo = { 0.005, Name "Input/23Tempo de passo (s)", Highlight "Linen",
+                  Help Str["Intervalo de tempo de cada passo da simulação"]
+                 },
+
+    tempoMax = { 0.1, Name "Input/24Tempo de simu (s)", Highlight "Linen",
+                Help Str["Tempo máximo da simulação da simulação"]
+               },
+    passoCarga = { 30, Name "Input/25Passo Carga", Highlight "Linen",
+                Help Str["Passo da simulação em que uma carga é adicionada, variando a velocidade"]
+               }
   ]; // speed in rpm
 
-  wr = rpm/60*2*Pi ; // speed in rad_mec/s
+
+    //smoothStep[] = ($TimeStep) <= (3) ? 0. : Tanh[Pi*($Time/0.2)];
+
+  smoothStep[] = ($TimeStep) <= (passoCarga) ? 0. : Tanh[Pi* ( (($TimeStep-passoCarga)*$DTime)/0.28 ) ];
+
+  rpmAux[] = ($TimeStep) <= (passoCarga) ? rpm : rpm - 80*smoothStep[]; //FUNCIONOU!!
+
+  wr[] = rpmAux[]/60*2*Pi ; // speed in rad_mec/s - BAIXA ROTACAO
+
+  wr2[] = wr[]*((NbrSectStatorMag/2)/(NbrPolesInModel/2)) ; // speed in rad_mec/s rotor 2 - ALTA ROTACAO
 
   // supply at fixed position
+  /*DefineConstant
+  [
+    Freq[] = { wr2[]*NbrPolePairs/(2*Pi), ReadOnly 1, Name "Output/1Freq", Highlight "LightYellow" }
+  ];*/
+
+  Freq[] = wr2[]*NbrPolePairs/(2*Pi);
+
+  Omega[] = 2*Pi*Freq[] ;
+  T[] = 1/Freq[] ;
+
+    // relaxation of applied voltage, for reducing the transient
+    NbTrelax = 2 ; // Number of periods while relaxation is applied
+    Trelax[] = NbTrelax*T[];
+    Frelax[] = (!Flag_NL || Flag_AnalysisType==0 || $Time>Trelax[]) ? 1. :
+               0.5*(1.-Cos[Pi*$Time/Trelax[]]) ; // smooth step function
+
   DefineConstant
   [
-    Freq = { wr*NbrPolePairs/(2*Pi), ReadOnly 1, Name "Output/1Freq", Highlight "LightYellow" }
-  ];
-
-  Omega = 2*Pi*Freq ;
-  T = 1/Freq ;
-
-  DefineConstant
-  [
-    thetaMax_deg = { 30, Name "Input/21End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }
+    thetaMax_deg = { 180, Name "Input/11End rotor angle (loop)",Highlight "AliceBlue", Visible (Flag_AnalysisType==1) }
   ];
 
   theta0   = InitialRotorAngle + 0. ;
   thetaMax = thetaMax_deg * deg2rad ; // end rotor angle (used in doing a loop)
 
-  DefineConstant
+  /*DefineConstant
   [
-    NbTurns  = { (thetaMax-theta0)/(2*Pi), Name "Input/24Number of revolutions",
+    NbTurns  = { (thetaMax-theta0)/(2*Pi), Name "Input/14Number of revolutions",
                   Highlight "LightGrey", ReadOnly 1, Visible (Flag_AnalysisType==1)},
 
-    delta_theta_deg = { 1, Name "Input/22Step [deg]",
+    delta_theta_deg = { 1, Name "Input/12Step [deg]",
                         Highlight "AliceBlue", Visible (Flag_AnalysisType==1)}
-  ];
+  ];*/
 
   //relação de engrenagem de um pdd
   // pH*wH + pL*wL = nP*wP
@@ -220,36 +255,51 @@ Function {
 
   //considering that the outer rotor is stationary, the gear ratio becomes:
   // -> pH*wH = nP*wP
-  // -> Gr = pH/nP = wP/wH
-  // -> gear ratio = nbr of poles at rotor 1 / nbr of modulators
+  // -> Gr = wH/wP = nP/pH
+  // -> gear ratio = nbr of modulators / nbr of pair-poles at rotor 1
 
   // in this case, the nbr of modulators is equal to the nbr of poles at the outer rotor, so:
 
-  gear_ratio = NbrPolesInModel/NbrSectStatorMag;
+  gear_ratio = ((NbrSectStatorMag/2)/(NbrPolesInModel/2));
 
-  delta_theta[] = delta_theta_deg * deg2rad ;   //angulo de giro do rotor 1
-  delta_theta2[] = delta_theta[] * gear_ratio ; //angulo de giro do rotor 2
+  //delta_theta_deg = 1;
+  delta_theta_deg[] = rpmAux[]*passoTempo;
+
+  delta_theta_baixa[] = delta_theta_deg[] * deg2rad ;   //angulo de giro do rotor de baixa rotacao
+  delta_theta_alta[] = delta_theta_baixa[] * gear_ratio ; //angulo de giro do rotor de alta rotacao
 
   time0 = 0 ; // at initial rotor position
-  delta_time = delta_theta_deg * deg2rad/wr;
-  timemax = thetaMax/wr;
+  delta_time[] = delta_theta_deg[] * deg2rad/wr[];
+  timemax[] = thetaMax/wr[];
+
+  NbSteps[] = 30;//Ceil[(timemax[]-time0)/delta_time[]];
 
   DefineConstant
   [
-    NbSteps = { Ceil[(timemax-time0)/delta_time], Name "Input/23Number of steps",
-                Highlight "LightGrey", ReadOnly 10, Visible (Flag_AnalysisType==1)}
+    gearRatio = { gear_ratio, ReadOnly 1, Name "Input/25Gear Ratio", Highlight "Turquoise",
+                  Help Str["Relação de engrenagem produzida por (Num de moduladores/Num de par de polos do rotor de alta rotação)"]
+                }
   ];
 
-  RotorPosition[] = InitialRotorAngle + $Time * wr ;
+  /*DefineConstant
+  [
+    NbSteps = { Ceil[(timemax-time0)/delta_time[]], Name "Input/23Number of steps",
+                Highlight "LightGrey", ReadOnly 10, Visible (Flag_AnalysisType==1)}
+  ];*/
+
+  RotorPosition[] = InitialRotorAngle + $Time * wr[] ;
   RotorPosition_deg[] = RotorPosition[]*180/Pi;
 
-  Rotor2Position[] = InitialRotor2Angle + $Time * wr ;
+  Rotor2Position[] = InitialRotor2Angle + $Time * wr2[] ;
   Rotor2Position_deg[] = Rotor2Position[]*180/Pi;
 
 //+++
   Flag_ParkTransformation = 0 ;
   Theta_Park[] = ((RotorPosition[] + Pi/8) - Pi/6) * NbrPolePairs; // electrical degrees
   Theta_Park_deg[] = Theta_Park[]*180/Pi;
+
+  //Theta_Park2[] = ((Rotor2Position[] + Pi/8) - Pi/6) * NbrPolePairs; // electrical degrees
+  //Theta_Park_deg2[] = Theta_Park2[]*180/Pi;
 
   DefineConstant
   [

@@ -171,6 +171,7 @@ Function {
   NbWires[]  = 30 ; // Number of wires per slot
   // STATOR_IND_AM comprises all the slots in that phase, we need thus to divide by the number of slots
   nbSlots[] = Ceil[nbInds/NbrPhases/2] ;
+  //nbSlots[] = 26;
   SurfCoil[] = SurfaceArea[]{STATOR_IND_AM}/nbSlots[] ;//All inductors have the same surface
   Torque_mec[] = 1000;
 
@@ -192,10 +193,10 @@ Function {
                   Help Str["Intervalo de tempo de cada passo da simulação"]
                  },
 
-    tempoMax = { 0.1, Name "Input/24Tempo de simu (s)", Highlight "Linen",
+    tempoMax = { 0.12, Name "Input/24Tempo de simu (s)", Highlight "Linen",
                 Help Str["Tempo máximo da simulação da simulação"]
                },
-    passoCarga = { 30, Name "Input/25Passo Carga", Highlight "Linen",
+    passoCarga = { 35, Name "Input/25Passo Carga", Highlight "Linen",
                 Help Str["Passo da simulação em que uma carga é adicionada, variando a velocidade"]
                }
   ]; // speed in rpm
@@ -203,7 +204,7 @@ Function {
 
     //smoothStep[] = ($TimeStep) <= (3) ? 0. : Tanh[Pi*($Time/0.2)];
 
-  smoothStep[] = ($TimeStep) <= (passoCarga) ? 0. : Tanh[Pi* ( (($TimeStep-passoCarga)*$DTime)/0.28 ) ];
+  smoothStep[] = ($TimeStep) <= (passoCarga) ? 0. : Tanh[Pi* ( (($TimeStep-passoCarga)*$DTime)/0.03 ) ];
 
   rpmAux[] = ($TimeStep) <= (passoCarga) ? rpm : rpm - 80*smoothStep[]; //FUNCIONOU!!
 

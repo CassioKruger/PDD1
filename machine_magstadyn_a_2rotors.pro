@@ -195,6 +195,9 @@ Group {
   MB2  = MovingBand2D[ MovingBand_PhysicalNb2, Rotor_Bnd_MB, Rotor2_Bottom_Bnd_MB, SymmetryFactor] ;   //rotor 1 and bottom rotor2
   Air = Region[{ Rotor_Air, Rotor_Airgap, Rotor2_Air, Rotor2_Airgap, Stator_Air, Stator_Airgap, MB, MB2} ] ;
 
+  AG1 = Region[{MB,STATOR_AIRGAP,ROTOR2_AIRGAPTOP}];
+  AG2 = Region[{MB2,ROTOR_AIRGAP,ROTOR2_AIRGAPBOTTOM}];
+
   DomainCC = Region[{ Air, Inds, StatorCC, RotorCC, Rotor2CC }];  //non conducting
   DomainC  = Region[{ StatorC, RotorC, RotorC }];                 //massive conductor
   Domain  = Region[{ DomainCC, DomainC }] ;
@@ -875,7 +878,7 @@ PostProcessing {
 
      { Name Flux ;
        Value {
-	 Integral { [ SymmetryFactor*AxialLength*Idir[]*NbWires[]/SurfCoil[]* CompZ[{a}] ] ;
+	           Integral { [ SymmetryFactor*AxialLength*Idir[]*NbWires[]/SurfCoil[]* CompZ[{a}] ] ;
            In Inds  ; Jacobian Vol ; Integration I1 ; } } }
 
      { Name Force_vw ;
@@ -1023,6 +1026,7 @@ poI     = StrCat[po,"0Current [A]/"];
 poV     = StrCat[po,"1Voltage [V]/"];
 poF     = StrCat[po,"2Flux linkage [Vs]/"];
 poJL    = StrCat[po,"3Joule Losses [W]/"];
+poD    = StrCat[po,"4Densidade de Fluxo/"];
 po_mec        = StrCat["Output - Mechanics/", ResId];
 po_mecRotor1      = StrCat[po_mec,"0Rotor 1 /"];
 po_mecRotor2      = StrCat[po_mec,"1Rotor 2 /"];
@@ -1164,11 +1168,12 @@ PostOperation Get_GlobalQuantities UsingPost MagStaDyn_a_2D {
        SendToServer StrCat[poF,"0"]{0}, Color "LightYellow" ];
     EndIf
   EndIf
-/*
+
   //rotor 1
-  Print[ JouleLosses[Rotor], OnGlobal, Format TimeTable,
+  Print[ JouleLosses[PhaseA], OnGlobal, Format TimeTable,
    File > StrCat[ResDir,"JL",ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[poJL,"rotor"]{0}, Color "LightYellow" ];
+/*
   //rotor 2
   Print[ JouleLosses[Rotor2], OnGlobal, Format TimeTable,
    File > StrCat[ResDir,"JL2",ExtGnuplot], LastTimeStepOnly,
@@ -1182,10 +1187,31 @@ PostOperation Get_GlobalQuantities UsingPost MagStaDyn_a_2D {
    File > StrCat[ResDir,"JL_Fe2",ExtGnuplot], LastTimeStepOnly,
    SendToServer StrCat[poJL,"rotor2_fe"]{0}, Color "LightYellow" ];
 */
+
+Print[ Flux[PhaseA], OnGlobal, Format TimeTable,
+ File > StrCat[ResDir,"Flux_a",ExtGnuplot], LastTimeStepOnly,
+ StoreInVariable $Flux_a, SendToServer StrCat[poF,"A"]{0},  Color "Pink" ];
+If(NbrPhases==3)
+  Print[ Flux[PhaseB], OnGlobal, Format TimeTable,
+   File > StrCat[ResDir,"Flux_b",ExtGnuplot], LastTimeStepOnly,
+   StoreInVariable $Flux_b, SendToServer StrCat[poF,"B"]{0},  Color "Yellow" ];
+  Print[ Flux[PhaseC], OnGlobal, Format TimeTable,
+   File > StrCat[ResDir,"Flux_c",ExtGnuplot], LastTimeStepOnly,
+   StoreInVariable $Flux_c, SendToServer StrCat[poF,"C"]{0}, Color "LightGreen"];
+
+/*
+  Print[ Flux[STATOR_AIRGAP], OnGlobal, Format TimeTable,
+   File > StrCat[ResDir,"DensidadeFluxoAG1",ExtGnuplot], LastTimeStepOnly,
+   StoreInVariable $DensidadeFluxoAG1, SendToServer StrCat[poD,"AG1"]{0},  Color "Pink" ];
+  Print[ Flux[ROTOR_AIRGAP], OnGlobal, Format TimeTable,
+   File > StrCat[ResDir,"DensidadeFluxoAG2",ExtGnuplot], LastTimeStepOnly,
+   StoreInVariable $DensidadeFluxoAG2, SendToServer StrCat[poD,"AG2"]{0},  Color "Yellow" ];
+*/
+
 }
 
 
-/*
+
 PostOperation Get_Torque UsingPost MagStaDyn_a_2D {
   //rotor 1
   Print[ Torque_Maxwell[Rotor_Airgap], OnGlobal, Format TimeTable,
@@ -1215,7 +1241,7 @@ PostOperation Get_Torque_cplx UsingPost MagStaDyn_a_2D {
    File > StrCat[ResDir,"Ts",ExtGnuplot], StoreInVariable $Tstator,
    SendToServer StrCat[po_mecT,"stator"]{0}, Color "Ivory" ];
 }
-*/
+
 
 PostOperation Mechanical UsingPost Mechanical {
 
